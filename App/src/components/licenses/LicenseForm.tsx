@@ -9,31 +9,60 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { CalendarIcon, Save, X, Building2, User, KeySquare } from "lucide-react";
+import type { LicenseType } from "@/entities/LicenseSchema";
+import type { EnterpriseType } from "@/entities/EnterpriseSchema";
 
-const licenseTypes = [
-  { value: "basic", label: "Basic", description: "Access to basic features" },
-  { value: "professional", label: "Professional", description: "Advanced features and reports" },
-  { value: "admin", label: "Admin", description: "Full access including user management" }
+
+type LicenseTypeValue = "basic" | "professional" | "admin";
+
+interface LicenseTypeOption {
+  value: LicenseTypeValue; 
+  label: string;
+  description: string;
+}
+
+const licenseTypes: LicenseTypeOption[] = [
+  { value: "basic" as LicenseTypeValue, label: "Basic", description: "Access to basic features" },
+  { value: "professional" as LicenseTypeValue, label: "Professional", description: "Advanced features and reports" },
+  { value: "admin" as LicenseTypeValue, label: "Admin", description: "Full access including user management" }
 ];
 
-const defaultFeatures = {
+
+// Define interface for component props with proper TypeScript typing
+interface LicenseFormProps {
+  license?: LicenseType | null; // Optional license for editing mode
+  enterprises: EnterpriseType[]; // Array of available enterprises using EnterpriseType
+  onSave: (license: LicenseType) => void; // Callback function for saving
+  onCancel: () => void; // Callback function for canceling
+}
+
+
+// Define default features mapping with proper typing
+const defaultFeatures: Record<string, string[]> = {
   basic: ["dashboard", "basic_features"],
   professional: ["dashboard", "reports", "professional_features"],
   admin: ["dashboard", "admin_panel", "reports", "user_management", "advanced_features"]
 };
 
-export default function LicenseForm({ license, enterprises, onSave, onCancel }) {
-  const [formData, setFormData] = useState(license || {
-    enterprise_id: '',
-    user_email: '',
-    user_name: '',
+
+
+// Main component using React.FC with TypeScript props interface
+const LicenseForm: React.FC<LicenseFormProps> = ({ license, enterprises, onSave, onCancel }) => {
+  // State with proper TypeScript typing using Partial<LicenseType> for form data
+  const [formData, setFormData] = useState<LicenseType>(license || {
+    id:'test_id',
+    enterprise_id: 'test',
+    user_email: 'test@gmail.com',
+    user_name: 'test_user',
     status: 'active',
     license_type: 'basic',
     activation_date: new Date().toISOString().split('T')[0],
     features_access: defaultFeatures.basic
-  });
+  }
+);
 
-  const [availableFeatures] = useState([
+  // Use the predefined array instead of useState for available features
+  const [availableFeatures] = useState<string[]>([
     "dashboard",
     "basic_features", 
     "professional_features",
@@ -46,34 +75,40 @@ export default function LicenseForm({ license, enterprises, onSave, onCancel }) 
     "api_access"
   ]);
 
-  const handleSubmit = (e) => {
+  // Form submission handler with proper event typing
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    // No need for type assertion since formData is already LicenseType
     onSave(formData);
   };
 
-  const handleChange = (field, value) => {
+  // Generic change handler with proper typing for field updates
+  const handleChange = <K extends keyof LicenseType>(field: K, value: LicenseType[K]): void => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleLicenseTypeChange = (type) => {
+  // License type change handler with feature access update
+  const handleLicenseTypeChange = (type: LicenseTypeValue): void => {
     setFormData(prev => ({
       ...prev,
       license_type: type,
-      features_access: defaultFeatures[type] || []
+      features_access: defaultFeatures[type]
     }));
   };
 
-  const handleFeatureToggle = (feature) => {
+  // Feature toggle handler for checkbox interactions with proper typing
+  const handleFeatureToggle = (feature: string): void => {
     setFormData(prev => ({
       ...prev,
-      features_access: prev.features_access.includes(feature)
-        ? prev.features_access.filter(f => f !== feature)
-        : [...prev.features_access, feature]
+      features_access: prev.features_access?.includes(feature)
+        ? prev.features_access.filter((f: string) => f !== feature)
+        : [...(prev.features_access || []), feature]
     }));
   };
 
-  const selectedEnterprise = enterprises.find(ent => ent.id === formData.enterprise_id);
-  const canAssignMore = selectedEnterprise 
+  // Calculate enterprise license availability with proper typing using EnterpriseType
+  const selectedEnterprise: EnterpriseType | undefined = enterprises.find(ent => ent.id === formData.enterprise_id);
+  const canAssignMore: boolean = selectedEnterprise 
     ? selectedEnterprise.used_licenses < selectedEnterprise.max_licenses
     : false;
 
@@ -112,7 +147,7 @@ export default function LicenseForm({ license, enterprises, onSave, onCancel }) 
                 </SelectTrigger>
                 <SelectContent>
                   {enterprises.map(enterprise => (
-                    <SelectItem key={enterprise.id} value={enterprise.id}>
+                    <SelectItem key={enterprise.id} value={enterprise.id?? ''}>
                       <div className="flex items-center justify-between w-full">
                         <span>{enterprise.name}</span>
                         <span className="text-xs text-gray-500 ml-2">
@@ -184,7 +219,7 @@ export default function LicenseForm({ license, enterprises, onSave, onCancel }) 
 
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700">Status</Label>
-              <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
+              <Select value={formData.status} onValueChange={(value) => handleChange('status', value as "active" | "inactive" | "suspended")}>
                 <SelectTrigger className="focus:ring-2 focus:ring-blue-500">
                   <SelectValue />
                 </SelectTrigger>
@@ -209,7 +244,7 @@ export default function LicenseForm({ license, enterprises, onSave, onCancel }) 
                   <Calendar
                     mode="single"
                     selected={formData.activation_date ? new Date(formData.activation_date) : undefined}
-                    onSelect={(date) => handleChange('activation_date', date)}
+                    onSelect={(date) => handleChange('activation_date', date? date.toISOString().split('T')[0] : undefined)}
                   />
                 </PopoverContent>
               </Popover>
@@ -223,7 +258,7 @@ export default function LicenseForm({ license, enterprises, onSave, onCancel }) 
                 <div key={feature} className="flex items-center space-x-2">
                   <Checkbox
                     id={feature}
-                    checked={formData.features_access.includes(feature)}
+                    checked={formData.features_access?.includes(feature) ?? false}
                     onCheckedChange={() => handleFeatureToggle(feature)}
                   />
                   <Label 
@@ -244,7 +279,7 @@ export default function LicenseForm({ license, enterprises, onSave, onCancel }) 
             </Button>
             <Button 
               type="submit" 
-              className="bg-blue-600 hover:bg-blue-700 gap-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
               disabled={selectedEnterprise && !canAssignMore && !license}
             >
               <Save className="w-4 h-4" />
@@ -256,3 +291,5 @@ export default function LicenseForm({ license, enterprises, onSave, onCancel }) 
     </Card>
   );
 }
+
+export default LicenseForm;

@@ -16,51 +16,66 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import LicenseForm from "../components/licenses/LicenseForm";
+import LicenseForm from "@/components/licenses/LicenseForm";
+import type { EnterpriseType } from "@/entities/EnterpriseSchema";
+import type { LicenseType } from "@/entities/LicenseSchema";
 
-export default function Licenses() {
-  const [licenses, setLicenses] = useState([]);
-  const [enterprises, setEnterprises] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingLicense, setEditingLicense] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [enterpriseFilter, setEnterpriseFilter] = useState("all");
+
+
+// Main component with TypeScript React.FC type
+const Licenses: React.FC = () => {
+  // Type the state variables explicitly for better IntelliSense and error catching
+  const [licenses, setLicenses] = useState<LicenseType[]>([]);
+  const [enterprises, setEnterprises] = useState<EnterpriseType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [editingLicense, setEditingLicense] = useState<LicenseType | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [enterpriseFilter, setEnterpriseFilter] = useState<string>("all");
 
   useEffect(() => {
     loadData();
   }, []);
 
-  const loadData = async () => {
+  // Ajout du typage de retour pour la fonction async
+  const loadData = async (): Promise<void> => {
+    console.log('setIsLoading');
     setIsLoading(true);
     try {
+      
+      // Typage explicite des promesses retournées
       const [licenseData, enterpriseData] = await Promise.all([
-        License.list('-created_date'),
-        Enterprise.list()
+        License.list('-created_date') as Promise<LicenseType[]>,
+        Enterprise.list() as Promise<EnterpriseType[]>
       ]);
       setLicenses(licenseData);
       setEnterprises(enterpriseData);
+
+      console.log('data loaded');
     } catch (error) {
       console.error('Error loading data:', error);
     }
     setIsLoading(false);
   };
 
-  const handleSaveLicense = async (licenseData) => {
+  // Typage du paramètre licenseData
+  const handleSaveLicense = async (licenseData: LicenseType): Promise<void> => {
     try {
       if (editingLicense) {
-        await License.update(editingLicense.id, licenseData);
+        // Mise à jour d'une licence existante
+        await License.update(editingLicense.id!, licenseData);
       } else {
+        // Création d'une nouvelle licence avec last_used initialisé à null
         await License.create({
           ...licenseData,
-          last_used: null
+          last_used: 'null'
         });
         
-        // Update enterprise used_licenses count
-        const enterprise = enterprises.find(ent => ent.id === licenseData.enterprise_id);
+        // Mise à jour du compteur used_licenses de l'entreprise
+        const enterprise = enterprises.find((ent: EnterpriseType) => ent.id === licenseData.enterprise_id);
         if (enterprise && licenseData.status === 'active') {
-          await Enterprise.update(enterprise.id, {
+          await Enterprise.update(enterprise.id!, {
             ...enterprise,
             used_licenses: (enterprise.used_licenses || 0) + 1
           });
@@ -68,23 +83,26 @@ export default function Licenses() {
       }
       setShowForm(false);
       setEditingLicense(null);
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error saving license:', error);
     }
   };
 
-  const handleEditLicense = (license) => {
+  // Typage du paramètre license
+  const handleEditLicense = (license: LicenseType): void => {
     setEditingLicense(license);
     setShowForm(true);
   };
 
-  const getEnterpriseName = (enterpriseId) => {
-    const enterprise = enterprises.find(ent => ent.id === enterpriseId);
+  // Typage du paramètre enterpriseId et de la valeur de retour
+  const getEnterpriseName = (enterpriseId: string): string => {
+    const enterprise = enterprises.find((ent: EnterpriseType) => ent.id === enterpriseId);
     return enterprise ? enterprise.name : 'Unknown';
   };
 
-  const getStatusColor = (status) => {
+  // Typage des paramètres et valeurs de retour pour les fonctions utilitaires
+  const getStatusColor = (status: LicenseType['status']): string => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-700 border-green-200';
@@ -97,7 +115,7 @@ export default function Licenses() {
     }
   };
 
-  const getLicenseTypeColor = (type) => {
+  const getLicenseTypeColor = (type: LicenseType['license_type']): string => {
     switch (type) {
       case 'admin':
         return 'bg-purple-100 text-purple-700';
@@ -110,28 +128,32 @@ export default function Licenses() {
     }
   };
 
-  const filteredLicenses = licenses.filter(license => {
+  // Filtrage des licences avec typage approprié
+  const filteredLicenses: LicenseType[] = licenses.filter((license: LicenseType) => {
     const matchesSearch = license.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         license.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         getEnterpriseName(license.enterprise_id).toLowerCase().includes(searchTerm.toLowerCase());
+                        license.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        getEnterpriseName(license.enterprise_id).toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || license.status === statusFilter;
     const matchesEnterprise = enterpriseFilter === "all" || license.enterprise_id === enterpriseFilter;
     
     return matchesSearch && matchesStatus && matchesEnterprise;
   });
 
-  const activeLicenses = licenses.filter(license => license.status === 'active').length;
-  const inactiveLicenses = licenses.filter(license => license.status === 'inactive').length;
-  const suspendedLicenses = licenses.filter(license => license.status === 'suspended').length;
+  // Calcul des statistiques avec typage explicite
+  const activeLicenses: number = licenses.filter((license: LicenseType) => license.status === 'active').length;
+  const inactiveLicenses: number = licenses.filter((license: LicenseType) => license.status === 'inactive').length;
+  const suspendedLicenses: number = licenses.filter((license: LicenseType) => license.status === 'suspended').length;
 
-  if (isLoading) {
+
+    if (isLoading) {
     return (
       <div className="p-8">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-gray-200 rounded w-64"></div>
             <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {[...Array(3)].map((_, i) => (
+              {/* Génération de 3 placeholders avec clé typée */}
+              {[...Array(3)].map((_: undefined, i: number) => (
                 <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
               ))}
             </div>
@@ -152,7 +174,7 @@ export default function Licenses() {
           </div>
           <Button 
             onClick={() => setShowForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
           >
             <Plus className="w-4 h-4" />
             Assign License
@@ -225,8 +247,8 @@ export default function Licenses() {
             </div>
 
             {/* Filters */}
-            <Card className="shadow-lg border-0 bg-white/60 backdrop-blur-xl border border-white/30 mb-8">
-              <CardContent className="p-6">
+            <Card className="shadow-lg border-0 bg-white/60 backdrop-blur-xl border border-white/30 mb-8 p-6">
+              <CardContent className="p-1">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -256,7 +278,7 @@ export default function Licenses() {
                       <SelectContent>
                         <SelectItem value="all">All Enterprises</SelectItem>
                         {enterprises.map(enterprise => (
-                          <SelectItem key={enterprise.id} value={enterprise.id}>
+                          <SelectItem key={enterprise.id} value={enterprise.id!}>
                             {enterprise.name}
                           </SelectItem>
                         ))}
@@ -272,7 +294,7 @@ export default function Licenses() {
               <CardHeader>
                 <CardTitle>Licenses ({filteredLicenses.length})</CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
+              <CardContent className="p-4">
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
@@ -329,7 +351,7 @@ export default function Licenses() {
                               )}
                             </TableCell>
                             <TableCell>
-                              {license.last_used ? (
+                              {license.last_used && license.last_used !== 'null' ? (
                                 <span className="text-sm text-gray-600">
                                   {format(new Date(license.last_used), 'MMM d, yyyy')}
                                 </span>
@@ -376,7 +398,7 @@ export default function Licenses() {
                 {!searchTerm && statusFilter === "all" && enterpriseFilter === "all" && (
                   <Button 
                     onClick={() => setShowForm(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Assign License
@@ -390,3 +412,4 @@ export default function Licenses() {
     </div>
   );
 }
+export default Licenses;

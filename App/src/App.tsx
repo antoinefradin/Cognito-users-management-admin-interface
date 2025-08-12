@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Layout from "@/layout/Layout";
 import Dashboard from "@/pages/Dashboard";
 import Enterprises from "@/pages/Enterprises";
+import Licenses from "@/pages/Licenses";
+
 
 const App: React.FC = () => {
   return (
@@ -27,6 +29,16 @@ const App: React.FC = () => {
           element={
             <Layout currentPageName="Enterprises">
               <Enterprises />
+            </Layout>
+          } 
+        />
+
+        {/* Licenses page */}
+        <Route 
+          path="/licenses" 
+          element={
+            <Layout currentPageName="Licenses">
+              <Licenses />
             </Layout>
           } 
         />

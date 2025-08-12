@@ -6,6 +6,10 @@ const licenseSchema = {
   title: "License",
   type: "object",
   properties: {
+    id: {
+      type: "string",
+      description: "License id"
+    },
     enterprise_id: {
       type: "string",
       description: "ID of the enterprise this license belongs to"
@@ -54,20 +58,19 @@ const licenseSchema = {
       type: "array",
       items: {
         type: "string",
-        enum: [
-          "dashboard",
-          "analytics",
-          "reporting",
-          "user_management",
-          "api_access",
-          "integrations",
-          "advanced_security",
-          "custom_branding",
-          "priority_support",
-          "data_export"
-        ]
+        // enum: [
+        //   "dashboard",
+        //   "analytics",
+        //   "reporting",
+        //   "user_management",
+        //   "api_access",
+        //   "integrations",
+        //   "advanced_security",
+        //   "custom_branding",
+        //   "priority_support",
+        //   "data_export"
+        // ]
       },
-      uniqueItems: true,
       description: "List of features this license has access to"
     },
     created_date: {
@@ -82,6 +85,7 @@ const licenseSchema = {
     }
   },
   required: [
+    "id",
     "enterprise_id",
     "user_email",
     "user_name"

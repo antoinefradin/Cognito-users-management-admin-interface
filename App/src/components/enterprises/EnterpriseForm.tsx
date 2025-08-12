@@ -61,6 +61,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onSave, onC
     }
     
     return {
+      id: '',
       name: '',
       industry: 'other',
       size: 'enterprise',

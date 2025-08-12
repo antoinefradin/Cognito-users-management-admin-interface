@@ -115,6 +115,7 @@ const enterpriseSchema = {
     },
   },
   required: [
+    "id",
     "name",
     "contact_email",
     "max_licenses"
