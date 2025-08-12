@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { 
   Building2, 
+  Cog,
   LayoutDashboard, 
   Users, // Kept this import as per instruction to "keep existing code (rest of lucide imports)"
   KeySquare, 
@@ -29,6 +30,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator"
+
 
 // ADDED: Import your page components
 // import Dashboard from "@/pages/Dashboard";
@@ -99,21 +102,23 @@ export default function Layout({ children, currentPageName }: LayoutProps) {
         <Sidebar className="border-r border-white/20 bg-white/60 backdrop-blur-xl">
           <SidebarHeader className="border-b border-white/20 p-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-                <Building2 className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-900 to-cyan-700 rounded-xl flex items-center justify-center shadow-lg">
+                <Cog className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-gray-900 text-lg">LicenseHub</h2>
-                <p className="text-xs text-gray-500 font-medium">Admin Panel</p>
+                <h2 className="font-bold text-gray-900 text-lg">IQ Agent</h2>
+                <p className="text-xs text-gray-500 font-medium">Users Management Panel</p>
               </div>
             </div>
+            {/*<Separator className="bg-gray-200 m-1 my-2" />*/}
           </SidebarHeader>
+          
           
           <SidebarContent className="p-3">
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 py-3">
-                Management
-              </SidebarGroupLabel>
+              {/*<SidebarGroupLabel className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 py-3">
+                MENU
+              </SidebarGroupLabel>*/}
               <SidebarGroupContent>
                 <SidebarMenu className="space-y-1">
                   {navigationItems.map((item) => (
