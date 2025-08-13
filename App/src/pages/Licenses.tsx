@@ -248,7 +248,7 @@ const Licenses: React.FC = () => {
 
             {/* Filters */}
             <Card className="shadow-lg border-0 bg-white/60 backdrop-blur-xl border border-white/30 mb-8 p-6">
-              <CardContent className="p-1">
+              <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />

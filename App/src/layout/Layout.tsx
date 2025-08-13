@@ -96,9 +96,7 @@ export default function Layout({ children, currentPageName }: LayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-gray-100 via-blue-50 to-purple-50">
-        {/* REMOVED: Style tags with CSS variables */}
-        
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-gray-100 via-blue-50 to-purple-50">        
         <Sidebar className="border-r border-white/20 bg-white/60 backdrop-blur-xl">
           <SidebarHeader className="border-b border-white/20 p-6">
             <div className="flex items-center gap-3">
@@ -125,16 +123,16 @@ export default function Layout({ children, currentPageName }: LayoutProps) {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
                         asChild 
-                        className={`hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 rounded-xl group ${
+                        className={`hover:bg-blue-50 hover:text-blue-700 rounded-xl group ${
                           location.pathname === item.url 
                             ? 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100' 
                             : 'text-gray-600 hover:shadow-sm'
                         }`}
                       >
                         <Link to={item.url} className="flex items-center gap-3 px-4 py-3">
-                          <item.icon className={`w-5 h-5 transition-colors ${
-                            location.pathname === item.url ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-600'
-                          }`} />
+                          <item.icon className={`w-5 h-5 ${
+                            location.pathname === item.url ? 'text-blue-600' : 'text-gray-400'
+                          }hover:text-blue-600`} />
                           <span className="font-medium">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -167,7 +165,7 @@ export default function Layout({ children, currentPageName }: LayoutProps) {
           <header className="bg-white/60 backdrop-blur-xl border-b border-white/20 px-6 py-4 md:hidden">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="hover:bg-gray-100 p-2 rounded-lg transition-colors duration-200" />
-              <h1 className="text-xl font-bold text-gray-900">LicenseHub Admin</h1>
+              <h1 className="text-xl font-bold text-gray-900">IQ Agent Admin</h1>
             </div>
           </header>
 
