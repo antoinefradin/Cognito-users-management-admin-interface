@@ -6,6 +6,11 @@ import Enterprises from "@/pages/Enterprises";
 import Licenses from "@/pages/Licenses";
 
 
+const user_pool_id = import.meta.env.VITE_APP_USER_POOL_ID;
+console.log('env');
+console.log(user_pool_id);
+
+
 const App: React.FC = () => {
   return (
     <Router>
