@@ -17,8 +17,11 @@ const ALLOWED_SIGN_UP_EMAIL_LIST: string[] = app.node.tryGetContext(
 const AUTO_JOIN_USER_GROUPS: string[] = app.node.tryGetContext(
   "autoJoinUserGroups"
 );
-
-
+const USERPOOL_DOMAIN_PREFIX_KEY: string = app.node.tryGetContext(
+  "userpoolDomainPrefix"
+);
+const SELF_SIGN_UP_ENABLED: boolean =
+  app.node.tryGetContext("selfSignUpEnabled");
 
 const admin = new AdminPanelStack(app, `AdminPanelStack`+ STAGE_PREFIX, {
   env: {
@@ -29,6 +32,8 @@ const admin = new AdminPanelStack(app, `AdminPanelStack`+ STAGE_PREFIX, {
   allowedSignUpEmailDomains: ALLOWED_SIGN_UP_EMAIL_DOMAINS,
   allowedSignUpEmailList: ALLOWED_SIGN_UP_EMAIL_LIST,
   autoJoinUserGroups: AUTO_JOIN_USER_GROUPS,
+  userPoolDomainPrefixKey: USERPOOL_DOMAIN_PREFIX_KEY,
+  selfSignUpEnabled: SELF_SIGN_UP_ENABLED,
 });
 
 
