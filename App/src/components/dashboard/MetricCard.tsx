@@ -43,7 +43,7 @@ export default function MetricCard({
   };
 
   return (
-    <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm">
+    <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white/60">
       <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${colorVariants[color]} opacity-10 rounded-full transform translate-x-8 -translate-y-8 blur-2xl`} />
 
       <CardHeader className="pb-3">
