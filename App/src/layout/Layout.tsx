@@ -1,25 +1,19 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-// KEPT: Original @/ imports (you'll need to configure path alias in vite.config.js)
 import { createPageUrl } from "@/utils";
 import { 
   Building2, 
   Cog,
   LayoutDashboard, 
-  Users, // Kept this import as per instruction to "keep existing code (rest of lucide imports)"
   KeySquare, 
   BarChart3,
-  Settings,
-  LogOut, // Kept this import as per instruction to "keep existing code (rest of lucide imports)"
-  Menu,
-  X
+  LogOut, 
 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -29,20 +23,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator"
-
-
-// ADDED: Import your page components
-// import Dashboard from "@/pages/Dashboard";
-// import Enterprises from "@/pages/Enterprises";
-// import Licenses from "@/pages/Licenses";
-// import Analytics from "@/pages/Analytics";
-
-
-/** ADDED */
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import '@/styles/app.scss'; // Import SCSS instead of inline styles
-
 
 
 
@@ -62,7 +44,6 @@ const navigationItems = [
     url: createPageUrl("Licenses"),
     icon: KeySquare,
   },
-  // The "Users" item has been removed as per the outline
   {
     title: "Analytics",
     url: createPageUrl("Analytics"),
@@ -85,14 +66,31 @@ interface LayoutProps {
 
 export default function Layout({ children, currentPageName }: LayoutProps) {
   const location = useLocation();
-  const navigate = useNavigate(); // ADDED: useNavigate hook for programmatic navigation
 
-  // Handle logout functionality using navigate
-  const handleLogout = () => {
-    // Add your logout logic here (clear tokens, etc.)
-    //...
-    navigate('/login'); // Navigate to login page
-  };
+  // // Handle logout functionality using navigate
+  // const handleLogout = () => {
+  //   console.log('logout');
+  //   try {
+  //     const clientId = import.meta.env.VITE_APP_USER_POOL_CLIENT_ID;
+  //     const logoutUri = import.meta.env.VITE_APP_REDIRECT_SIGNOUT_URL;
+  //     const cognitoDomain = import.meta.env.VITE_APP_COGNITO_DOMAIN;
+
+  //     // Redirection to Cognito logout page
+  //     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  //   } catch (error) {
+  //     console.error('Erreur lors de la déconnexion:', error);
+  //   }
+  // };
+
+  // const handleLogout = async () => {
+  // try {
+  //   // Supprimer l'utilisateur du stockage local/session
+  //   await auth.removeUser();
+    
+  //   // Rediriger vers la page de déconnexion Cognito
+  //   await auth.signoutRedirect();
+  // } catch (error) {
+  //   console.error('Erreur lors de la déconnexion:', error);
 
   return (
     <SidebarProvider>
@@ -154,8 +152,8 @@ export default function Layout({ children, currentPageName }: LayoutProps) {
                 <p className="font-semibold text-gray-900 text-sm truncate">Sales Admin</p>
                 <p className="text-xs text-gray-500 truncate">admin@company.com</p>
               </div>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
-                <LogOut className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600" onClick={handleLogout}>
+                <LogOut className="w-4 h-4"/>
               </Button>
             </div>
           </SidebarFooter>

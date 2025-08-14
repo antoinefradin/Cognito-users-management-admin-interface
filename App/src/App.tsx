@@ -18,14 +18,6 @@ const App: React.FC = () => {
 
   const auth = useAuth();
 
-  // Custom sign-out redirect function using Cognito logout endpoint
-  const signOutRedirect = (): void => {
-    const clientId = import.meta.env.VITE_APP_USER_POOL_CLIENT_ID;
-    const logoutUri = import.meta.env.VITE_APP_REDIRECT_SIGNOUT_URL;
-    const cognitoDomain = import.meta.env.VITE_APP_COGNITO_DOMAIN;
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-  };
-
   // Handle authentication errors
   if (auth.error) {
     return <ErrorFallback />;
