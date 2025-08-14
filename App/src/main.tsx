@@ -10,6 +10,7 @@ const cognitoAuthConfig = {
   authority: `https://cognito-idp.eu-west-3.amazonaws.com/${import.meta.env.VITE_APP_USER_POOL_ID}`,
   client_id: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
   redirect_uri: import.meta.env.VITE_APP_REDIRECT_SIGNIN_URL,
+  post_logout_redirect_uri : `${encodeURIComponent(import.meta.env.VITE_APP_REDIRECT_SIGNIN_URL)}`,
   response_type: "code",
   scope: "email openid",
 };

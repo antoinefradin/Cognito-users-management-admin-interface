@@ -25,6 +25,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import '@/styles/app.scss'; // Import SCSS instead of inline styles
+import { useAuth } from "react-oidc-context";
+
 
 
 
@@ -67,30 +69,15 @@ interface LayoutProps {
 export default function Layout({ children, currentPageName }: LayoutProps) {
   const location = useLocation();
 
-  // // Handle logout functionality using navigate
-  // const handleLogout = () => {
-  //   console.log('logout');
-  //   try {
-  //     const clientId = import.meta.env.VITE_APP_USER_POOL_CLIENT_ID;
-  //     const logoutUri = import.meta.env.VITE_APP_REDIRECT_SIGNOUT_URL;
-  //     const cognitoDomain = import.meta.env.VITE_APP_COGNITO_DOMAIN;
+  const auth = useAuth();
 
-  //     // Redirection to Cognito logout page
-  //     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-  //   } catch (error) {
-  //     console.error('Erreur lors de la déconnexion:', error);
-  //   }
-  // };
+  const handleLogout = () => {
+    auth.removeUser();
+    window.location.href = `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/logout?client_id=${import.meta.env.VITE_APP_USER_POOL_CLIENT_ID}&logout_uri=${encodeURIComponent(import.meta.env.VITE_APP_REDIRECT_SIGNOUT_URL)}`;
 
-  // const handleLogout = async () => {
-  // try {
-  //   // Supprimer l'utilisateur du stockage local/session
-  //   await auth.removeUser();
-    
-  //   // Rediriger vers la page de déconnexion Cognito
-  //   await auth.signoutRedirect();
-  // } catch (error) {
-  //   console.error('Erreur lors de la déconnexion:', error);
+    //auth.signoutRedirect();
+  };
+
 
   return (
     <SidebarProvider>
