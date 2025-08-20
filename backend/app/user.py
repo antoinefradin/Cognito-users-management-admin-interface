@@ -11,6 +11,6 @@ class User(BaseModel):
     def is_admin(self) -> bool:
         return "Admin" in self.groups
 
-    def is_creating_bot_allowed(self) -> bool:
-        return self.is_admin() or "CreatingBotAllowed" in self.groups ### To change for the group name
+    def is_creating_licenses_and_enterprise_allowed(self) -> bool:
+        return self.is_admin() or "LicensesEnterprisesCreationAllowed" in self.groups 
 

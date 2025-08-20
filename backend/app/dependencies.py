@@ -26,22 +26,17 @@ def get_current_user(token: HTTPAuthorizationCredentials = Depends(security)):
         )
 
 
-
-### TO CHANGE FOR USERS/COMPANIES CREATION
-
-
-# def check_admin(user: User = Depends(get_current_user)):
-#     if not user.is_admin():
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN,
-#             detail="Only admin can access this API.",
-#         )
+def check_admin(user: User = Depends(get_current_user)):
+    if not user.is_admin():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admin can access this API.",
+        )
 
 
-
-# def check_creating_bot_allowed(user: User = Depends(get_current_user)):
-#     if not user.is_creating_bot_allowed():
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN,
-#             detail="User is not allowed to create bot.",
-#         )
+def check_creating_license_enterprise_allowed(user: User = Depends(get_current_user)):
+    if not user.is_creating_licenses_and_enterprise_allowed():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User is not allowed to create new Enterprise or License.",
+        )
