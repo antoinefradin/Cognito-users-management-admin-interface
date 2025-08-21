@@ -51,7 +51,7 @@ class EnterpriseInput(BaseSchema):
     subscription_tier: SubscriptionTierEnum = Field(default=SubscriptionTierEnum.BASIC, description="Subscription tier")
     max_licenses: int = Field(..., ge=1, description="Maximum number of licenses allowed")
     used_licenses: int = Field(default=0, ge=0, description="Currently used licenses")
-    contract_start_date: Optional[datetime] = Field(None, description="Contract start date (YYYY-MM-DD)")
+    contract_start_date: datetime = Field(..., description="Contract start date (YYYY-MM-DD)")
     contract_end_date: Optional[datetime] = Field(None, description="Contract end date (YYYY-MM-DD)")
     monthly_revenue: Optional[float] = Field(default=0, ge=0, description="Monthly revenue from this enterprise")
     
@@ -120,7 +120,7 @@ class EnterpriseOutput(BaseSchema):
     subscription_tier: SubscriptionTierEnum = Field(..., description="Subscription tier")
     max_licenses: int = Field(..., description="Maximum number of licenses allowed")
     used_licenses: int = Field(..., description="Currently used licenses")
-    contract_start_date: Optional[datetime] = Field(None, description="Contract start date (YYYY-MM-DD)")
+    contract_start_date: datetime = Field(None, description="Contract start date (YYYY-MM-DD)")
     contract_end_date: Optional[datetime] = Field(None, description="Contract end date (YYYY-MM-DD)")
     monthly_revenue: Optional[float] = Field(None, description="Monthly revenue from this enterprise")
 
