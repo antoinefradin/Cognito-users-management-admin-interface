@@ -9,6 +9,7 @@ COPY ./pyproject.toml ./uv.lock ./
 
 ENV UV_HTTP_TIMEOUT=10800
 RUN pip install uv --no-cache-dir && \
+    uv venv && \
     uv pip install -r pyproject.toml --no-deps && \
     uv pip install --system -e .
 
