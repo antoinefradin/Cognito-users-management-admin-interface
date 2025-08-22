@@ -50,5 +50,22 @@ def create_new_bot(user_id: str, enterprise_input: EnterpriseInput) -> Enterpris
         ),
     )
     return EnterpriseOutput(
-        # TO DO
+        id=enterprise_input.id,
+        name=enterprise_input.name,
+        industry=enterprise_input.industry,
+        size=enterprise_input.size,
+        contact_email=enterprise_input.contact_email,
+        contact_phone=enterprise_input.contact_phone,
+        address=enterprise_input.address,
+        website=enterprise_input.website,
+        status=enterprise_input.status,
+        subscription_tier=enterprise_input.subscription_tier,
+        max_licenses=enterprise_input.max_licenses,
+        used_licenses=enterprise_input.used_licenses,
+        contract_start_date=enterprise_input.contract_start_date,
+        contract_end_date=enterprise_input.contract_end_date,
+        monthly_revenue=enterprise_input.monthly_revenue,
+
+        created_date=current_time,
+        updated_date=current_time,
     )

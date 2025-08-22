@@ -122,7 +122,7 @@ class EnterpriseOutput(BaseSchema):
     used_licenses: int = Field(..., description="Currently used licenses")
     contract_start_date: datetime = Field(None, description="Contract start date (YYYY-MM-DD)")
     contract_end_date: Optional[datetime] = Field(None, description="Contract end date (YYYY-MM-DD)")
-    monthly_revenue: Optional[float] = Field(None, description="Monthly revenue from this enterprise")
+    monthly_revenue: Optional[float] = Field(None, description="Monthly revenue from this enterprise") 
 
     # added
     created_date: datetime = Field(..., description="Creation date (YYYY-MM-DD)")
