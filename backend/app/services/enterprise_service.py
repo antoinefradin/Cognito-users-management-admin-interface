@@ -5,12 +5,13 @@ from app.routes.schemas.entreprise import (
     CompanySizeEnum,
     EnterpriseStatusEnum,
     SubscriptionTierEnum,
-
 )
 from app.repositories.models.enterprise import (
     EnterpriseModel,
 )
-
+from app.repositories.enterprise_repository import (
+    store_enterprise,
+)
 from app.utils import (
     get_current_time,
 )
@@ -23,7 +24,6 @@ def create_new_bot(user_id: str, enterprise_input: EnterpriseInput) -> Enterpris
     """Create a new enterprise."""
     current_time = get_current_time()
 
-    # TO DO
     store_enterprise(
         user_id,
         EnterpriseModel(
