@@ -3,6 +3,7 @@ name = "IQ-Admin-Panel-backend"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "boto3>=1.40.15",
     "fastapi>=0.116.1",
     "humps>=0.2.2",
     "jose>=1.0.0",

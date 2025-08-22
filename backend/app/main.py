@@ -9,7 +9,7 @@ from app.dependencies import get_current_user
 #     RecordNotFoundError,
 #     ResourceConflictError,
 # )
-# from app.routes.admin import router as admin_router
+from app.routes.enterprise import router as enterprise_router
 # from app.routes.published_api import router as published_api_router
 from app.user import User
 # from app.utils import is_running_on_lambda
@@ -43,7 +43,7 @@ app = FastAPI(
 )
 
 
-# app.include_router(conversation_router)
+app.include_router(enterprise_router)
 # app.include_router(bot_router)
 # app.include_router(api_publication_router)
 # app.include_router(admin_router)

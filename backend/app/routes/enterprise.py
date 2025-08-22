@@ -40,21 +40,23 @@ def create_enterprise(
     check_admin_permissions=Depends(check_admin),
 ):
     """
-    Créer une nouvelle entreprise.
-    
-    - Crée un groupe Cognito correspondant
-    - Enregistre l'entreprise en base PostgreSQL Aurora
-    - Nécessite les permissions administrateur
+    Create a new Enterprise:
+    - Create a corresponding Cognito group / tenant_id
+    - Save the Enterprise in DynamoDB
     """
     current_user: User = request.state.current_user
     
-    # Cette fonction ne s'exécute QUE si check_creating_entreprise_allowed() et check_admin() réussit
-    return create_new_enterprise(
+    # Run only if check_creating_entreprise_allowed() and check_admin() are True
+    # 1. Creation in DB 
+    enterprise = create_new_enterprise(
         user_id=current_user.id,
-        tenant=current_user.tenant,
         enterprise_data=enterprise_input,
-        background_tasks=background_tasks
     )
+
+    # 2. Background task (async)
+    #background_tasks.add_task(sync_cognito_group, enterprise.id)
+    
+    return enterprise
 
 
 

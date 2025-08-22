@@ -20,7 +20,7 @@ from app.utils import (
 
 
 
-def create_new_bot(user_id: str, enterprise_input: EnterpriseInput) -> EnterpriseOutput:
+def create_new_enterprise(user_id: str, enterprise_input: EnterpriseInput) -> EnterpriseOutput:
     """Create a new enterprise."""
     current_time = get_current_time()
 
