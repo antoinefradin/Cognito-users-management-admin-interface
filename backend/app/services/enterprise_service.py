@@ -1,3 +1,5 @@
+import logging
+
 from app.routes.schemas.entreprise import (
     EnterpriseInput,
     EnterpriseOutput,
@@ -18,12 +20,18 @@ from app.utils import (
 
 
 
+logger = logging.getLogger(__name__)
 
 
 def create_new_enterprise(user_id: str, enterprise_input: EnterpriseInput) -> EnterpriseOutput:
     """Create a new enterprise."""
-    current_time = get_current_time()
 
+    logger.info(f"create_new_enterprise() function")
+    logger.info(f"Create enterprise: {enterprise_input}") 
+
+
+    current_time = get_current_time()
+    
     store_enterprise(
         user_id,
         EnterpriseModel(

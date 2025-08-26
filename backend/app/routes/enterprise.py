@@ -1,9 +1,11 @@
 from typing import Literal
 from fastapi import APIRouter, Request, Depends, HTTPException, Query, BackgroundTasks
+import logging
+
 
 from app.dependencies import check_creating_license_enterprise_allowed, check_admin
 from app.user import User
-from app.routes.schemas import (
+from app.routes.schemas.entreprise import (
     EnterpriseInput, 
     EnterpriseOutput, 
     EnterpriseUpdate, 
@@ -28,6 +30,11 @@ from app.services.enterprise_service import (
 #     bulk_update_enterprises
 )
 
+
+logger = logging.getLogger(__name__)
+
+
+
 router = APIRouter(tags=["enterprise"])#, prefix="/enterprise")
 
 
@@ -44,6 +51,8 @@ def create_enterprise(
     - Create a corresponding Cognito group / tenant_id
     - Save the Enterprise in DynamoDB
     """
+    logger.info(f"/enterprise")
+
     current_user: User = request.state.current_user
     
     # Run only if check_creating_entreprise_allowed() and check_admin() are True

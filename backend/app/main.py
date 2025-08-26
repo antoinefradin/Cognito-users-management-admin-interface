@@ -89,7 +89,7 @@ def add_current_user_to_request(request: Request, call_next: ASGIApp):
         request.state.current_user = get_current_user(token)
     else:
         request.state.current_user = User(
-            id="test_user", name="test_user", groups=[], tenant="test_tenant"
+            id="test_user", name="test_user", groups=[], role="test_admin"
         )
 
     response = call_next(request)  # type: ignore

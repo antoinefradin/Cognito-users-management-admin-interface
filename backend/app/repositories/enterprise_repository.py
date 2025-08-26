@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 def store_enterprise(user_id: str, custom_enterprise: EnterpriseModel):
     table = _get_table_public_client()
+    logger.info(f"store_enterprise() function")
     logger.info(f"Storing enterprise: {custom_enterprise}")
 
     item = {
