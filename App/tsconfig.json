@@ -12,6 +12,8 @@
       "@/components/*": ["./src/components/*"],
       "@/pages/*": ["./src/pages/*"],
       "@/layout/*": ["./src/layout/*"],
+      "@/types/*": ["./src/@types/*"],
+      "@/hooks/*": ["./src/hooks/*"],
       "@/styles/*": ["./styles/*"]
     }
   }
