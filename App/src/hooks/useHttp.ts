@@ -1,4 +1,4 @@
-import { fetchAuthSession } from 'aws-amplify/auth';
+//import { fetchAuthSession } from 'aws-amplify/auth';
 import axios, { AxiosError } from 'axios';
 import type { AxiosResponse } from 'axios';
 import useSWR from 'swr';
@@ -17,6 +17,49 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_APP_API_ENDPOINT,
 });
 
+
+// ============================================================================
+// TOKEN MANAGEMENT - REACT-OIDC-CONTEXT
+// ============================================================================
+/**
+ * Token retrieval function using react-oidc-context
+ * This function will be called from components that have access to `useAuth` hook
+ */
+let getAuthTokenFunction: (() => string | null) | null = null;
+
+/**
+ * Function to set the token getter from components with auth context
+ * Call this from your App component or any component wrapped by `AuthProvider`
+ */
+export const setAuthTokenGetter = (tokenGetter: () => string | null) => {
+  getAuthTokenFunction = tokenGetter;
+};
+
+/**
+ * Get authentication token
+ * Falls back to localStorage if context is not available
+ */
+const getAuthToken = (): string | null => {
+  try {
+    // STEP 1: Try to get token from react-oidc-context
+    if (getAuthTokenFunction) {
+      return getAuthTokenFunction();
+    }
+
+    // STEP 2: Fallback to localStorage (for cases where context is not available)
+    // const token = localStorage.getItem('oidc.user:' + import.meta.env.VITE_APP_USER_POOL_CLIENT_ID + ':' + import.meta.env.VITE_APP_USER_POOL_ID);
+    // if (token) {
+    //   const userData = JSON.parse(token);
+    //   return userData.access_token || userData.id_token;
+    // }
+
+    return null;
+  } catch (error) {
+    console.warn('Error retrieving authentication token:', error);
+    return null;
+  }
+};
+
 // ============================================================================
 // REQUEST INTERCEPTOR - AUTOMATIC AUTHENTICATION
 // ============================================================================
@@ -24,34 +67,29 @@ const api = axios.create({
  * Axios request interceptor for automatic authentication
  * Executed before each HTTP request to add necessary headers
  */
-// // HTTP Request Preprocessing
 api.interceptors.request.use(async (config) => {
-  // If Authenticated, append ID Token to Request Header
   try {
-    // STEP 1: Retrieve AWS Cognito authentication token
-    // fetchAuthSession() gets the active user session from AWS Amplify
-    const authSession = await fetchAuthSession();
-    const idToken = authSession.tokens?.idToken;
+    // STEP 1: Retrieve authentication token from react-oidc-context
+    const token = getAuthToken();
 
     // STEP 2: Add Bearer token if user is authenticated
-    if (idToken) {
-      // Convert token to string and add to Authorization headers
-      config.headers['Authorization'] = 'Bearer ' + idToken.toString();
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
 
     // STEP 3: Set default Content-Type configuration
-    // All requests use JSON as exchange format
     config.headers['Content-Type'] = 'application/json';
 
     // STEP 4: Return modified configuration
     return config;
   } catch (error) {
     // In case of error during token retrieval, continue without authentication
-    console.warn('Error retrieving authentication token:', error);
+    console.warn('Error in request interceptor:', error);
     config.headers['Content-Type'] = 'application/json';
     return config;
   }
 });
+
 
 // ============================================================================
 // FETCHER FUNCTIONS FOR SWR

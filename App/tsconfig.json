@@ -6,15 +6,19 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["./src/*"],
       "@/entities/*": ["./src/entities/*"],
       "@/components/*": ["./src/components/*"],
       "@/pages/*": ["./src/pages/*"],
       "@/layout/*": ["./src/layout/*"],
-      "@/types/*": ["./src/@types/*"],
+      "@/@types/*": ["./src/@types/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/styles/*": ["./styles/*"]
     }
-  }
+  },
+  
 }

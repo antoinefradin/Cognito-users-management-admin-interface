@@ -6,6 +6,10 @@ import './index.css'
 import App from './App.tsx'
 
 
+/**
+ * OIDC configuration for AWS Cognito
+ * Using react-oidc-context for authentication management
+ */
 const cognitoAuthConfig = {
   authority: `https://cognito-idp.eu-west-3.amazonaws.com/${import.meta.env.VITE_APP_USER_POOL_ID}`,
   client_id: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
@@ -15,6 +19,10 @@ const cognitoAuthConfig = {
   scope: "email openid",
 };
 
+
+// ============================================================================
+// APPLICATION BOOTSTRAP
+// ============================================================================
 const rootElement = document.getElementById("root");
 
 if (!rootElement) {
@@ -23,6 +31,9 @@ if (!rootElement) {
 
 const root = createRoot(rootElement);
 
+// ============================================================================
+// RENDER WITH OIDC AUTHENTICATION PROVIDER
+// ============================================================================
 // wrap the application with AuthProvider
 root.render(
   <StrictMode>

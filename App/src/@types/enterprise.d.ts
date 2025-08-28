@@ -1,3 +1,4 @@
+// src/@types/enterprise.d.ts
 export enum IndustryEnum {
     TECHNOLOGY = "technology",
     HEALTHCARE = "healthcare",

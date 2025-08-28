@@ -12,13 +12,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { CalendarIcon, Save, X, Loader2 } from "lucide-react";
 // import type { EnterpriseType } from "@/entities/EnterpriseSchema";
-import type { EnterpriseMeta, RegisterEnterpriseRequest, RegisterEnterpriseResponse} from '@/@types/enterprise';
+import type { EnterpriseMeta, RegisterEnterpriseRequest} from '@/@types/enterprise.d';
 import { 
   IndustryEnum,
   CompanySizeEnum,
   EnterpriseStatusEnum,
   SubscriptionTierEnum,
-} from '@/@types/enterprise';
+} from '@/@types/enterprise.d';
 
 import useEnterprise from "@/hooks/useEnterpriseApi";
 
@@ -364,7 +364,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
   //     handleChange(field, '');
   //   }
   // };
-  
+
   // ========================================================================
   // RENDER
   // ========================================================================
