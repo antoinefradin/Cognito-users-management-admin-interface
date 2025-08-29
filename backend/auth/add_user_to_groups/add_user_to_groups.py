@@ -26,20 +26,20 @@ def handler(event: dict, context: LambdaContext) -> dict:
 
     trigger_source: str = event["triggerSource"]
     if trigger_source == "PostConfirmation_ConfirmSignUp":
-        add_user_to_groups(USER_POOL_ID, user_name, AUTO_JOIN_USER_GROUPS, email)
-        add_user_role(USER_POOL_ID, user_name, email)
+        add_user_to_groups(USER_POOL_ID, user_name, AUTO_JOIN_USER_GROUPS)
+        add_user_role(USER_POOL_ID, user_name)
 
     elif trigger_source == "PostAuthentication_Authentication":
         user_status: str = user_attributes["cognito:user_status"]
-        add_user_role(USER_POOL_ID, user_name, email)
+        add_user_role(USER_POOL_ID, user_name)
         if user_status == "FORCE_CHANGE_PASSWORD":
-            add_user_to_groups(USER_POOL_ID, user_name, AUTO_JOIN_USER_GROUPS, email)
+            add_user_to_groups(USER_POOL_ID, user_name, AUTO_JOIN_USER_GROUPS)
 
     return event
 
 
-def add_user_to_groups(user_pool_id: str, username: str, groups: list[str], email: str):
-    # Ajouter les groupes automatiques (AdminPanelAccessAllowed)
+def add_user_to_groups(user_pool_id: str, username: str, groups: list[str]):
+    # Ajouter les groupes automatiques (LicensesEnterprisesCreationAllowed)
     for group in groups:
         logger.info(f"Adding user '{username}' to group '{group}'")
         cognito.admin_add_user_to_group(
@@ -49,7 +49,7 @@ def add_user_to_groups(user_pool_id: str, username: str, groups: list[str], emai
         )
     
 
-def add_user_role(user_pool_id: str, username: str, email: str, role: str='admin'):
+def add_user_role(user_pool_id: str, username: str, role: str='admin'):
     logger.info(f"Adding role '{role}' to user '{username}'")
     cognito.admin_update_user_attributes(
         UserPoolId=user_pool_id,

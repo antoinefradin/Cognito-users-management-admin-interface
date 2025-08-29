@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import '@aws-amplify/ui-react/styles.css';
@@ -9,12 +9,27 @@ import Enterprises from "@/pages/Enterprises";
 import Licenses from "@/pages/Licenses";
 
 import { useAuth } from "react-oidc-context";
+import { setAuthTokenGetter } from './hooks/useHttp';
 
 
 
 const App: React.FC = () => {
 
   const auth = useAuth();
+
+  console.log(auth)
+  
+  // ============================================================================
+  // SETUP TOKEN GETTER FOR AXIOS INTERCEPTOR
+  // ============================================================================
+  useEffect(() => {
+    // Set up the token getter function for axios interceptor
+    setAuthTokenGetter(() => {
+      // Return the appropriate token (id_token for Cognito, access_token for APIs)
+      return auth.user?.id_token || auth.user?.access_token || null;
+    });
+  }, [auth.user]);
+
 
   // Handle authentication errors
   if (auth.error) {

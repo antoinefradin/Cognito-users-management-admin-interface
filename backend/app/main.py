@@ -42,12 +42,7 @@ app = FastAPI(
     title=title,
 )
 
-
 app.include_router(enterprise_router)
-# app.include_router(bot_router)
-# app.include_router(api_publication_router)
-# app.include_router(admin_router)
-
 
 
 app.add_middleware(
@@ -61,6 +56,7 @@ app.add_middleware(
 
 def error_handler_factory(status_code: int) -> Callable[[Request, Exception], Response]:
     def error_handler(_: Request, exc: Exception) -> JSONResponse:
+        logger.error("Middleware Error handler:")
         logger.error(exc)
         logger.error("".join(traceback.format_tb(exc.__traceback__)))
         return JSONResponse({"errors": [str(exc)]}, status_code=status_code)
@@ -83,16 +79,25 @@ app.add_exception_handler(Exception, error_handler_factory(500))
 @app.middleware("http")
 def add_current_user_to_request(request: Request, call_next: ASGIApp):
     authorization = request.headers.get("Authorization")
+    logger.info("add_current_user_to_request()")
     if authorization:
+        logger.info("authorization TRUE")
         token_str = authorization.split(" ")[1]
+        logger.info(f"token: {token_str}")
         token = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token_str)
+        logger.info(f"token HTTP: {token_str}")
+        logger.info(f"User: {get_current_user(token)}")
+
         request.state.current_user = get_current_user(token)
     else:
+        logger.info("authorization FALSE")
         request.state.current_user = User(
-            id="test_user", name="test_user", groups=[], role="test_admin"
+            id="test_user", name="test_user", groups=[], role="admin"
         )
+        logger.info(request.state)
 
     response = call_next(request)  # type: ignore
+    logger.info(f"response: {response}")
     return response
 
 

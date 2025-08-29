@@ -48,7 +48,6 @@ def create_enterprise(
 ):
     """
     Create a new Enterprise:
-    - Create a corresponding Cognito group / tenant_id
     - Save the Enterprise in DynamoDB
     """
     logger.info(f"/enterprise")

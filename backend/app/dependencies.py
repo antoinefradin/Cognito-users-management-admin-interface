@@ -4,13 +4,18 @@ from fastapi import Depends, HTTPException, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError
+import logging
 
+logger = logging.getLogger(__name__)
 security = HTTPBearer()
 
 
 def get_current_user(token: HTTPAuthorizationCredentials = Depends(security)):
+    decoded = verify_token(token.credentials)
+    logger.info(f"decoded: {decoded}")
     try:
         decoded = verify_token(token.credentials)
+        logger.info(f"decoded: {decoded}")
         # Return user information
         return User(
             id=decoded["sub"],
