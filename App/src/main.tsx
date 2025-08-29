@@ -15,8 +15,12 @@ const cognitoAuthConfig = {
   client_id: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
   redirect_uri: import.meta.env.VITE_APP_REDIRECT_SIGNIN_URL,
   post_logout_redirect_uri : `${encodeURIComponent(import.meta.env.VITE_APP_REDIRECT_SIGNIN_URL)}`,
+
+  // Cognito-specific: Ensure we get the ID token with all claims
+  loadUserInfo: false, // We get everything from ID token
+
   response_type: "code",
-  scope: "email openid",
+  scope: "email profile openid", // /!\ add "profile" to be sure to be able to retreive custom Cognito claims in the token
 };
 
 

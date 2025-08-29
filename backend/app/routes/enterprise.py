@@ -42,7 +42,7 @@ router = APIRouter(tags=["enterprise"])#, prefix="/enterprise")
 def create_enterprise(
     request: Request,
     enterprise_input: EnterpriseInput,
-    background_tasks: BackgroundTasks,
+    # background_tasks: BackgroundTasks,
     check_creating_enterprise_allowed=Depends(check_creating_license_enterprise_allowed), 
     check_admin_permissions=Depends(check_admin),
 ):
@@ -58,7 +58,7 @@ def create_enterprise(
     # 1. Creation in DB 
     enterprise = create_new_enterprise(
         user_id=current_user.id,
-        enterprise_data=enterprise_input,
+        enterprise_input=enterprise_input,
     )
 
     # 2. Background task (async)

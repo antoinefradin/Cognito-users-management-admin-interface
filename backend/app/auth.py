@@ -19,7 +19,7 @@ def verify_token(token: str) -> dict:
     
     keys = response.json()["keys"]
     logger.info(f"keys verify_token: {keys}")
-
+    
     header = jwt.get_unverified_header(token)
     logger.info(f"header verify_token: {header}")
 
