@@ -251,7 +251,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
   
   const handleStartDateSelect = useCallback((date: Date | undefined) => {
     if (date) {
-      setContractStartDate(format(date, 'yyyy-MM-dd'));
+      setContractStartDate(date.toISOString());    //(format(date, 'yyyy-MM-dd'));
     } else {
       setContractStartDate('');
     }
@@ -259,7 +259,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
 
   const handleEndDateSelect = useCallback((date: Date | undefined) => {
     if (date) {
-      setContractEndDate(format(date, 'yyyy-MM-dd'));
+      setContractEndDate(date.toISOString());     //(format(date, 'yyyy-MM-dd'));
     } else {
       setContractEndDate('');
     }
@@ -273,97 +273,6 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
     return value.charAt(0).toUpperCase() + value.slice(1);
   };
 
-  // ========================================================================
-  // FORM DATA INITIALIZATION - Enhanced with new types
-  // ========================================================================
-  // const initializeFormData = (enterprise: EnterpriseMeta | null | undefined): EnterpriseMeta => {
-  //   if (enterprise) {
-  //     return {
-  //       id: enterprise.id || '',
-  //       name: enterprise.name || '',
-  //       industry: enterprise.industry || IndustryEnum.OTHER,
-  //       size: enterprise.size || CompanySizeEnum.ENTERPRISE,
-  //       contactEmail: enterprise.contactEmail || '',
-  //       contactPhone: enterprise.contactPhone || '',
-  //       address: enterprise.address || '',
-  //       website: enterprise.website || '',
-  //       status: enterprise.status || EnterpriseStatusEnum.ACTIVE,
-  //       subscriptionTier: enterprise.subscriptionTier || SubscriptionTierEnum.BASIC,
-  //       maxLicenses: enterprise.maxLicenses || 10,
-  //       contractStartDate: enterprise.contractStartDate || '',
-  //       contractEndDate: enterprise.contractEndDate || '',
-  //       monthlyRevenue: enterprise.monthlyRevenue || 0,
-  //       usedLicenses: enterprise.usedLicenses || 0,
-  //       createdDate: enterprise.createdDate || '',
-  //       updatedDate: enterprise.updatedDate || ''
-  //     };
-  //   }
-    
-  //   // CORRECTED: Default values using proper enum types
-  //   return {
-  //     id: `ENT-${Date.now()}`, // Auto-generate ID for new enterprises
-  //     name: '',
-  //     industry: IndustryEnum.OTHER,
-  //     size: CompanySizeEnum.ENTERPRISE,
-  //     contactEmail: '',
-  //     contactPhone: '',
-  //     address: '',
-  //     website: '',
-  //     status: EnterpriseStatusEnum.ACTIVE,
-  //     subscriptionTier: SubscriptionTierEnum.BASIC,
-  //     maxLicenses: 10,
-  //     contractStartDate: new Date().toISOString().split('T')[0], // Default to today
-  //     contractEndDate: '',
-  //     monthlyRevenue: 0,
-  //     usedLicenses: 0,
-  //     createdDate: '',
-  //     updatedDate: ''
-  //   };
-  // };
-
-  // const [formData, setFormData] = useState<EnterpriseMeta>(initializeFormData(enterprise));
-
-  // // Added parameter type annotation for form submit handler
-  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-  //   e.preventDefault();
-  //   onSave(formData);
-  // };
-
-  // Added parameter type annotations for change handler
-  // const handleChange = (field: keyof EnterpriseMeta, value: string | number | Date | undefined): void => {
-  //   setFormData(prev => ({ ...prev, [field]: value }));
-  // };
-
-  // // Added helper function with proper typing for date formatting
-  // const formatDateForDisplay = (date: string | Date | undefined): string => {
-  //   if (!date) return 'Pick a date';
-  //   try {
-  //     return format(new Date(date), 'PPP');
-  //   } catch {
-  //     return 'Pick a date';
-  //   }
-  // };
-
-  // // Added helper function with proper typing for date selection
-  // const getSelectedDate = (date: string | Date | undefined): Date | undefined => {
-  //   if (!date) return undefined;
-  //   try {
-  //     return new Date(date);
-  //   } catch {
-  //     return undefined;
-  //   }
-  // };
-
-  // // Added helper function to handle date selection and format it properly
-  // const handleDateSelect = (field: 'contract_start_date' | 'contract_end_date', date: Date | undefined): void => {
-  //   if (date) {
-  //     // Format date as YYYY-MM-DD to match schema format
-  //     const formattedDate = format(date, 'yyyy-MM-dd');
-  //     handleChange(field, formattedDate);
-  //   } else {
-  //     handleChange(field, '');
-  //   }
-  // };
 
   // ========================================================================
   // RENDER
@@ -567,10 +476,10 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
                 id="monthlyRevenue"
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 value={monthlyRevenue}
-                onChange={(e) => setMonthlyRevenue(parseFloat(e.target.value) || 0)}
-                placeholder="5000"
+                onChange={(e) => setMonthlyRevenue(parseInt(e.target.value, 10) || 0)}
+                placeholder="125"
                 disabled={isLoading}
                 className="focus:ring-2 focus:ring-blue-500"
               />
