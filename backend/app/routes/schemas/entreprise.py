@@ -6,7 +6,6 @@ from app.routes.schemas.base import BaseSchema
 
 from pydantic import Field, root_validator, validator, EmailStr
 
-from datetime import datetime
 from enum import Enum
 
 class IndustryEnum(str, Enum):
@@ -51,8 +50,8 @@ class EnterpriseInput(BaseSchema):
     subscription_tier: SubscriptionTierEnum = Field(default=SubscriptionTierEnum.BASIC, description="Subscription tier")
     max_licenses: int = Field(..., ge=1, description="Maximum number of licenses allowed")
     used_licenses: int = Field(default=0, ge=0, description="Currently used licenses")
-    contract_start_date: datetime = Field(..., description="Contract start date (YYYY-MM-DD)")
-    contract_end_date: Optional[datetime] = Field(None, description="Contract end date (YYYY-MM-DD)")
+    contract_start_date: str = Field(..., description="Contract start date (YYYY-MM-DD)")
+    contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
     monthly_revenue: Optional[int] = Field(default=0, ge=0, description="Monthly revenue from this enterprise")
     
     @validator('website')
@@ -88,8 +87,8 @@ class EnterpriseUpdate(BaseSchema):
     subscription_tier: Optional[SubscriptionTierEnum] = Field(None, description="Subscription tier")
     max_licenses: Optional[int] = Field(None, ge=1, description="Maximum number of licenses allowed")
     used_licenses: Optional[int] = Field(None, ge=0, description="Currently used licenses")
-    contract_start_date: Optional[datetime] = Field(None, description="Contract start date (YYYY-MM-DD)")
-    contract_end_date: Optional[datetime] = Field(None, description="Contract end date (YYYY-MM-DD)")
+    contract_start_date: Optional[str] = Field(None, description="Contract start date (YYYY-MM-DD)")
+    contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
     monthly_revenue: Optional[int] = Field(None, ge=0, description="Monthly revenue from this enterprise")
     
     @validator('website')
@@ -120,13 +119,13 @@ class EnterpriseOutput(BaseSchema):
     subscription_tier: SubscriptionTierEnum = Field(..., description="Subscription tier")
     max_licenses: int = Field(..., description="Maximum number of licenses allowed")
     used_licenses: int = Field(..., description="Currently used licenses")
-    contract_start_date: datetime = Field(None, description="Contract start date (YYYY-MM-DD)")
-    contract_end_date: Optional[datetime] = Field(None, description="Contract end date (YYYY-MM-DD)")
+    contract_start_date: str = Field(None, description="Contract start date (YYYY-MM-DD)")
+    contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
     monthly_revenue: Optional[int] = Field(None, description="Monthly revenue from this enterprise") 
 
     # added
-    created_date: datetime = Field(..., description="Creation date (YYYY-MM-DD)")
-    updated_date: datetime = Field(..., description="Last update date (YYYY-MM-DD)")
+    created_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
+    updated_date: str = Field(..., description="Last update date (YYYY-MM-DD)")
 
 
 

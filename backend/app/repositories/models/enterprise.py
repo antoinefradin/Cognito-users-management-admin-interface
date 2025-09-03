@@ -1,7 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, Field, EmailStr, validator
 from decimal import Decimal
-from datetime import date, datetime
 
 
 from app.routes.schemas.entreprise import (
@@ -25,13 +24,13 @@ class EnterpriseModel(BaseModel):
     subscription_tier: SubscriptionTierEnum = Field(default=SubscriptionTierEnum.BASIC, description="Subscription tier")
     max_licenses: int = Field(..., description="Maximum number of licenses allowed")
     used_licenses: int = Field(default=0, ge=0, description="Currently used licenses")
-    contract_start_date: Optional[datetime] = Field(None, description="Contract start date (YYYY-MM-DD)")
-    contract_end_date: Optional[datetime] = Field(None, description="Contract end date (YYYY-MM-DD)")
+    contract_start_date: Optional[str] = Field(None, description="Contract start date (YYYY-MM-DD)")
+    contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
     monthly_revenue: Optional[int] = Field(default=0, ge=0, description="Monthly revenue from this enterprise")
 
     # Added
-    created_date: datetime = Field(..., description="Creation date (YYYY-MM-DD)")
-    updated_date: datetime = Field(..., description="Last update date (YYYY-MM-DD)")
+    created_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
+    updated_date: str = Field(..., description="Last update date (YYYY-MM-DD)")
     cognito_group_name: Optional[str] = Field(None, description="Associated Cognito group name") 
     created_by: str = Field(..., description="Cognito User id who created this enterprise")
 

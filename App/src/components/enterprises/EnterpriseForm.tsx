@@ -95,10 +95,10 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
   const [monthlyRevenue, setMonthlyRevenue] = useState(enterprise?.monthlyRevenue || 0);
   // Dates
   const [contractStartDate, setContractStartDate] = useState(
-    enterprise?.contractStartDate || new Date().toISOString().split('T')[0]
+    enterprise?.contractStartDate || new Date().toISOString()
   );
   const [contractEndDate, setContractEndDate] = useState(
-    enterprise?.contractEndDate || ''
+    enterprise?.contractEndDate || null
   );
 
   // ========================================================================
@@ -145,7 +145,6 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
       onError?.('Used licenses cannot exceed max licenses');
       return false;
     }
-    
     // Date validation
     if (contractEndDate) {
       const startDate = new Date(contractStartDate);
@@ -187,7 +186,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
     }
     
     setIsLoading(true);
-    
+
     // Build the request object
     const enterpriseRequest: RegisterEnterpriseRequest = {
       id: enterpriseId,
@@ -532,7 +531,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
-                    selected={contractEndDate ? new Date(contractEndDate) : undefined}
+                    selected={contractEndDate ? new Date(contractEndDate) : null}
                     onSelect={handleEndDateSelect}
                   />
                 </PopoverContent>

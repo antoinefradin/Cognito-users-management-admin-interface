@@ -47,8 +47,8 @@ export type EnterpriseMeta = {
   contractEndDate: string;
   monthlyRevenue: number;
   usedLicenses: number;
-  createdDate: Date;
-  updatedDate: Date;
+  createdDate: string;
+  updatedDate: string;
 }
 
 
@@ -71,7 +71,7 @@ export type RegisterEnterpriseRequest = {
 };
 
 export type RegisterEnterpriseResponse = RegisterEnterpriseRequest & {
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
 
