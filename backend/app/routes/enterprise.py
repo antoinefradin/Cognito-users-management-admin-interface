@@ -9,6 +9,7 @@ from app.routes.schemas.entreprise import (
     EnterpriseInput, 
     EnterpriseOutput, 
     EnterpriseUpdate, 
+    EnterpriseMetaOutput,
     # EnterpriseListOutput,
     # EnterpriseLicenseUpdate,
     # EnterpriseStatsOutput,
@@ -21,6 +22,7 @@ from app.routes.schemas.entreprise import (
 )
 from app.services.enterprise_service import (
      create_new_enterprise,
+     fetch_all_enterprises,
 #     get_enterprise_by_id,
 #     get_enterprises_list,
 #     update_enterprise,
@@ -46,8 +48,7 @@ def create_enterprise(
     check_creating_enterprise_allowed=Depends(check_creating_license_enterprise_allowed), 
     check_admin_permissions=Depends(check_admin),
 ):
-    """
-    Create a new Enterprise:
+    """Create a new Enterprise:
     - Save the Enterprise in DynamoDB
     """
     logger.info(f"/enterprise")
@@ -60,7 +61,6 @@ def create_enterprise(
         user_id=current_user.id,
         enterprise_input=enterprise_input,
     )
-
     # 2. Background task (async)
     #background_tasks.add_task(sync_cognito_group, enterprise.id)
     
@@ -68,7 +68,37 @@ def create_enterprise(
 
 
 
+@router.get("/enterprise", response_model=list[EnterpriseMetaOutput])
+def get_all_enterprises(
+    request: Request,
+    limit: int | None = None,
+    check_admin_permissions=Depends(check_admin),
+):
+    """Get all enterprises. The order is descending by `contract_end_date`.
+    - If `limit` is specified, only the first n enterprises will be returned.
+    """
+    current_user: User = request.state.current_user
 
+    enterprises = []
+    enterprises = fetch_all_enterprises(limit=limit)
+
+    output = [
+        EnterpriseMetaOutput(
+            id=enterprise.id,
+            name=enterprise.name,
+            industry=enterprise.industry,
+            size=enterprise.size,
+            website=enterprise.website,
+            status=enterprise.status,
+            subscription_tier=enterprise.subscription_tier,
+            max_licenses=enterprise.max_licenses,
+            used_licenses=enterprise.used_licenses,
+            contract_end_date=enterprise.contract_end_date,
+            monthly_revenue=enterprise.monthly_revenue,
+        )
+        for enterprise in enterprises
+    ]
+    return output
 
 
 

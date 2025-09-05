@@ -52,5 +52,19 @@ class EnterpriseModel(BaseModel):
             if v <= values['contract_start_date']:
                 raise ValueError('Contract end date must be after start date')
         return v
+
+
+
+class EnterpriseMeta(BaseModel):
+    id: str = Field(..., description="Company id")
+    name: str = Field(..., description="Company name")
+    industry: Optional[IndustryEnum] = Field(None, description="Industry sector")
     
-    
+    website: Optional[str] = Field(None, description="Company website")
+    status: EnterpriseStatusEnum = Field(default=EnterpriseStatusEnum.ACTIVE, description="Enterprise status")
+    subscription_tier: SubscriptionTierEnum = Field(default=SubscriptionTierEnum.BASIC, description="Subscription tier")
+    max_licenses: int = Field(..., description="Maximum number of licenses allowed")
+    used_licenses: int = Field(default=0, ge=0, description="Currently used licenses")
+
+    contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
+    monthly_revenue: Optional[int] = Field(default=0, ge=0, description="Monthly revenue from this enterprise")

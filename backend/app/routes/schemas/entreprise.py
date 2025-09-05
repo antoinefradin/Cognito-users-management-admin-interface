@@ -129,6 +129,24 @@ class EnterpriseOutput(BaseSchema):
 
 
 
+class EnterpriseMetaOutput(BaseSchema):
+    id: str = Field(..., description="Company id")
+    name: str = Field(..., description="Company name")
+    industry: Optional[IndustryEnum] = Field(None, description="Industry sector")
+    # size: Optional[CompanySizeEnum] = Field(None, description="Company size")
+    # contact_email: EmailStr = Field(..., description="Primary contact email")
+    # contact_phone: Optional[str] = Field(None, description="Contact phone number")
+    # address: Optional[str] = Field(None, description="Company address")
+    website: Optional[str] = Field(None, description="Company website")
+    status: EnterpriseStatusEnum = Field(..., description="Enterprise status")
+    subscription_tier: SubscriptionTierEnum = Field(..., description="Subscription tier")
+    max_licenses: int = Field(..., description="Maximum number of licenses allowed")
+    used_licenses: int = Field(..., description="Currently used licenses")
+    # contract_start_date: str = Field(None, description="Contract start date (YYYY-MM-DD)")
+    contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
+    monthly_revenue: Optional[int] = Field(None, description="Monthly revenue from this enterprise") 
+    # created_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
+    # updated_date: str = Field(..., description="Last update date (YYYY-MM-DD)")
 
 
 

@@ -35,20 +35,20 @@ export type EnterpriseMeta = {
   id: string;
   name: string;
   industry: IndustryEnum;
-  size: CompanySizeEnum;
-  contactEmail: string;
-  contactPhone: string;
-  address: string;
+//   size: CompanySizeEnum;
+//   contactEmail: string;
+//   contactPhone: string;
+//   address: string;
   website: string;
   status: EnterpriseStatusEnum;
   subscriptionTier: SubscriptionTierEnum;
   maxLicenses: number;
-  contractStartDate: string;
+//   contractStartDate: string;
   contractEndDate: string;
   monthlyRevenue: number;
   usedLicenses: number;
-  createdDate: string;
-  updatedDate: string;
+//   createdDate: string;
+//   updatedDate: string;
 }
 
 
@@ -75,3 +75,6 @@ export type RegisterEnterpriseResponse = RegisterEnterpriseRequest & {
   updatedAt: string;
 };
 
+
+
+export type GetEnterpriseResponse = EnterpriseMeta[]

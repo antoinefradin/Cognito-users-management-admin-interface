@@ -7,6 +7,7 @@ import type {
 //   GetPresignedUrlResponse,
   RegisterEnterpriseRequest,
   RegisterEnterpriseResponse,
+  GetEnterpriseResponse,
 //   UpdateBotPinnedRequest,
 //   UpdateBotPinnedResponse,
 //   UpdateBotRequest,
@@ -20,14 +21,13 @@ const useBotApi = () => {
   const http = useHttp();
 
   return {
-    // bots: (
-    //   req: GetBotsRequest,
-    //   refreshIntervalFunction?: (data?: GetBotsResponse) => number
-    // ) => {
-    //   return http.get<GetBotsResponse>(['bot', req], {
-    //     refreshInterval: refreshIntervalFunction,
-    //   });
-    // },
+    getEnterprise: (
+      refreshIntervalFunction?: (data?: GetEnterpriseResponse) => number
+    ) => {
+      return http.get<GetEnterpriseResponse>(['enterprise'], {
+        refreshInterval: refreshIntervalFunction,
+      });
+    },
     // getOnceMyBot: (botId: string) => {
     //   return http.getOnce<GetMyBotResponse>(`bot/private/${botId}`);
     // },

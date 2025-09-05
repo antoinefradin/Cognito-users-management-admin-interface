@@ -6,6 +6,7 @@ import logging
 import os
 from decimal import Decimal as decimal
 from functools import partial
+from boto3.dynamodb.conditions import Key
 
 
 from app.repositories.common import _get_table_public_client
@@ -14,6 +15,24 @@ from app.repositories.models.enterprise import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def get_enterprises_by_contract_end_date(limit: int = 20, ascending: bool = True):
+    table = _get_table_public_client()
+    logger.info(f"Get enterprises sorted by contract_end_date")
+
+    # Fetch all bots
+    query_params = {
+        "IndexName": "ContractEndDateIndex",
+        "KeyConditionExpression": Key("PK").begins_with("ENTERPRISE#"),
+        "ScanIndexForward": ascending,
+    }
+    if limit:
+        query_params["Limit"] = limit
+
+    response = table.query(**query_params)
+    return response
+
 
 
 def store_enterprise(user_id: str, custom_enterprise: EnterpriseModel):

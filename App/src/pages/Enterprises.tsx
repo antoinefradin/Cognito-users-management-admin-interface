@@ -13,19 +13,16 @@ import type { EnterpriseType } from "@/entities/EnterpriseSchema";
 import type { LicenseType } from "@/entities/LicenseSchema";
 
 
-
 // Added type for filter values to ensure type safety
 type StatusFilter = "all" | "active" | "trial" | "inactive" | "suspended";
 type TierFilter = "all" | "basic" | "private";
 
-// Added React.FC type annotation for the component
 const Enterprises: React.FC = () => {
-  // Added explicit type annotations for state variables
   const [enterprises, setEnterprises] = useState<EnterpriseType[]>([]);
   const [licenses, setLicenses] = useState<LicenseType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showForm, setShowForm] = useState<boolean>(false);
-  const [editingEnterprise, setEditingEnterprise] = useState<EnterpriseType | null>(null);
+  //const [editingEnterprise, setEditingEnterprise] = useState<EnterpriseType | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
@@ -34,7 +31,7 @@ const Enterprises: React.FC = () => {
     loadData();
   }, []);
 
-  // Added explicit return type annotation and proper error handling typing
+  // Load the existing enterprises in database
   const loadData = async (): Promise<void> => {
     setIsLoading(true);
     try {
@@ -61,33 +58,33 @@ const Enterprises: React.FC = () => {
     setIsLoading(false);
   };
 
-  // Added parameter typing and return type annotation
-  const handleSaveEnterprise = async (enterpriseData: Partial<EnterpriseType>): Promise<void> => {
-    try {
-      if (editingEnterprise) {
-        await Enterprise.update(editingEnterprise.id!, enterpriseData);
-      } else {
-        await Enterprise.create({
-          ...enterpriseData,
-          used_licenses: 0
-        });
-      }
-      setShowForm(false);
-      setEditingEnterprise(null);
-      loadData();
-    } catch (error) {
-      // Added proper error typing
-      console.error('Error saving enterprise:', error as Error);
-    }
-  };
+  // 
+  // const handleSaveEnterprise = async (enterpriseData: Partial<EnterpriseType>): Promise<void> => {
+  //   try {
+  //     if (editingEnterprise) {
+  //       await Enterprise.update(editingEnterprise.id!, enterpriseData);
+  //     } else {
+  //       await Enterprise.create({
+  //         ...enterpriseData,
+  //         used_licenses: 0
+  //       });
+  //     }
+  //     setShowForm(false);
+  //     setEditingEnterprise(null);
+  //     loadData();
+  //   } catch (error) {
+  //     // Added proper error typing
+  //     console.error('Error saving enterprise:', error as Error);
+  //   }
+  // };
 
-  // Added parameter typing
+  // Edit enterprise handle button - TO DO
   const handleEdit = (enterprise: EnterpriseType): void => {
-    setEditingEnterprise(enterprise);
+    //setEditingEnterprise(enterprise);
     setShowForm(true);
   };
 
-  // Added parameter typing
+  // View licenses handle button - TO DO
   const handleViewLicenses = (enterprise: EnterpriseType): void => {
     // This would navigate to licenses page with enterprise filter
     console.log('View licenses for:', enterprise.name);
@@ -102,6 +99,11 @@ const Enterprises: React.FC = () => {
     
     return matchesSearch && matchesStatus && matchesTier;
   });
+
+
+  // ========================================================================
+  // RENDER
+  // ========================================================================
 
   if (isLoading) {
     return (
@@ -146,11 +148,19 @@ const Enterprises: React.FC = () => {
               className="mb-8"
             >
               <EnterpriseForm
-                enterprise={editingEnterprise}
-                onSave={handleSaveEnterprise}
+                //enterprise={editingEnterprise}
+                onSuccess={(data) => {
+                  setShowForm(false);
+                  
+                  // Optional : refresh the enterpries list
+                  //refreshEnterprises?.();
+                }}
+                onError={(error) => {
+                  console.error('Enterprise save failed:', error);
+                }}
                 onCancel={() => {
                   setShowForm(false);
-                  setEditingEnterprise(null);
+                  //setEditingEnterprise(null);
                 }}
               />
             </motion.div>

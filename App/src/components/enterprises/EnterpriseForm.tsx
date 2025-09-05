@@ -11,8 +11,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { CalendarIcon, Save, X, Loader2 } from "lucide-react";
+import { ulid } from 'ulid';
 // import type { EnterpriseType } from "@/entities/EnterpriseSchema";
-import type { EnterpriseMeta, RegisterEnterpriseRequest} from '@/@types/enterprise.d';
+import type { EnterpriseMeta, RegisterEnterpriseRequest, RegisterEnterpriseResponse} from '@/@types/enterprise.d';
 import { 
   IndustryEnum,
   CompanySizeEnum,
@@ -35,12 +36,10 @@ const statuses = Object.values(EnterpriseStatusEnum);
 
 interface EnterpriseFormProps {
   enterprise?: EnterpriseMeta | null;
-  onSave: (formData: EnterpriseMeta) => void;
+  //onSave: (formData: EnterpriseMeta) => void;
   onCancel: () => void;
-
-  onSuccess?: (enterprise: any) => void;
+  onSuccess?: (enterprise: RegisterEnterpriseResponse) => void;
   onError?: (error: string) => void;
-  
   mode?: 'create' | 'update';
 }
 
@@ -70,7 +69,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
   // FORM STATE - All form fields as individual state
   // ========================================================================
   // Basic Information
-  const [enterpriseId, setEnterpriseId] = useState(enterprise?.id || `ENT-${Date.now()}`);
+  const [enterpriseId, setEnterpriseId] = useState(enterprise?.id || ulid());
   const [name, setName] = useState(enterprise?.name || '');
   const [contactEmail, setContactEmail] = useState(enterprise?.contactEmail || '');
   const [contactPhone, setContactPhone] = useState(enterprise?.contactPhone || '');
@@ -211,7 +210,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
       .then((response) => {
         // Success - navigate to enterprises list
         onSuccess?.(response.data);
-        navigate('/enterprises');
+        //navigate('/enterprises');
       })
       .catch((error) => {
         // Error handling
@@ -531,7 +530,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
-                    selected={contractEndDate ? new Date(contractEndDate) : null}
+                    selected={contractEndDate ? new Date(contractEndDate) : undefined}
                     onSelect={handleEndDateSelect}
                   />
                 </PopoverContent>
@@ -569,7 +568,8 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
             </Button>
             
             <Button 
-              type="submit" 
+              type="button"  // Changé de "submit" à "button"
+              onClick={onClickCreate}  // Ajout du callback
               className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
               disabled={isLoading}
             >
