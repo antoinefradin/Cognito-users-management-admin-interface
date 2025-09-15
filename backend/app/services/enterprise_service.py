@@ -1,6 +1,6 @@
 import logging
 
-from app.routes.schemas.entreprise import (
+from backend.app.routes.schemas.entreprise_schema import (
     EnterpriseInput,
     EnterpriseOutput,
     IndustryEnum,
@@ -8,10 +8,9 @@ from app.routes.schemas.entreprise import (
     EnterpriseStatusEnum,
     SubscriptionTierEnum,
 )
-from app.repositories.models.enterprise import (
+from backend.app.repositories.models.enterprise_model import (
     EnterpriseModel,
     EnterpriseMeta,
-    EnterpriseMetaOutput,
 )
 from app.repositories.enterprise_repository import (
     store_enterprise,

@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, EmailStr, validator
 from decimal import Decimal
 
 
-from app.routes.schemas.entreprise import (
+from backend.app.routes.schemas.entreprise_schema import (
     IndustryEnum,
     CompanySizeEnum, 
     EnterpriseStatusEnum,

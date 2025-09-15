@@ -88,7 +88,7 @@
     "allowedSignUpEmailDomains": ["iqanto.net"],
     "allowedSignUpEmailList": [],
     "autoJoinUserGroups": [
-      "Admin","LicensesEnterprisesCreationAllowed"
+      "Admin", "LicensesEnterprisesCreationAllowed"
     ],
     "userpoolDomainPrefix": "iq-admin-panel",
     "selfSignUpEnabled": true

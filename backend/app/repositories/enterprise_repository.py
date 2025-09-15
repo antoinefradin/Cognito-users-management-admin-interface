@@ -10,7 +10,7 @@ from boto3.dynamodb.conditions import Key
 
 
 from app.repositories.common import _get_table_public_client
-from app.repositories.models.enterprise import (
+from backend.app.repositories.models.enterprise_model import (
     EnterpriseModel,
 )
 

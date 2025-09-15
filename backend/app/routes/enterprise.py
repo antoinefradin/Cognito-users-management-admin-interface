@@ -2,34 +2,17 @@ from typing import Literal
 from fastapi import APIRouter, Request, Depends, HTTPException, Query, BackgroundTasks
 import logging
 
-
 from app.dependencies import check_creating_license_enterprise_allowed, check_admin
 from app.user import User
-from app.routes.schemas.entreprise import (
+from backend.app.routes.schemas.entreprise_schema import (
     EnterpriseInput, 
     EnterpriseOutput, 
-    EnterpriseUpdate, 
+    # EnterpriseUpdate, 
     EnterpriseMetaOutput,
-    # EnterpriseListOutput,
-    # EnterpriseLicenseUpdate,
-    # EnterpriseStatsOutput,
-    # BulkEnterpriseOperation,
-    # BulkOperationResult,
-    # IndustryEnum,
-    # CompanySizeEnum,
-    # EnterpriseStatusEnum,
-    # SubscriptionTierEnum
 )
 from app.services.enterprise_service import (
      create_new_enterprise,
      fetch_all_enterprises,
-#     get_enterprise_by_id,
-#     get_enterprises_list,
-#     update_enterprise,
-#     delete_enterprise,
-#     update_enterprise_licenses,
-#     get_enterprise_stats,
-#     bulk_update_enterprises
 )
 
 
@@ -51,7 +34,7 @@ def create_enterprise(
     """Create a new Enterprise:
     - Save the Enterprise in DynamoDB
     """
-    logger.info(f"/enterprise")
+    logger.info(f"POST /enterprise")
 
     current_user: User = request.state.current_user
     
@@ -77,6 +60,8 @@ def get_all_enterprises(
     """Get all enterprises. The order is descending by `contract_end_date`.
     - If `limit` is specified, only the first n enterprises will be returned.
     """
+    logger.info(f" GET /enterprise")
+
     current_user: User = request.state.current_user
 
     enterprises = []

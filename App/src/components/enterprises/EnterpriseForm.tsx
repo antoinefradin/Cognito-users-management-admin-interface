@@ -36,7 +36,6 @@ const statuses = Object.values(EnterpriseStatusEnum);
 
 interface EnterpriseFormProps {
   enterprise?: EnterpriseMeta | null;
-  //onSave: (formData: EnterpriseMeta) => void;
   onCancel: () => void;
   onSuccess?: (enterprise: RegisterEnterpriseResponse) => void;
   onError?: (error: string) => void;
