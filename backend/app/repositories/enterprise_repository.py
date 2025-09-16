@@ -10,7 +10,7 @@ from boto3.dynamodb.conditions import Key
 
 
 from app.repositories.common import _get_table_public_client
-from backend.app.repositories.models.enterprise_model import (
+from app.repositories.models.enterprise_model import (
     EnterpriseModel,
 )
 
@@ -23,8 +23,11 @@ def get_enterprises_by_contract_end_date(limit: int = 20, ascending: bool = True
 
     # Fetch all bots
     query_params = {
-        "IndexName": "ContractEndDateIndex",
-        "KeyConditionExpression": Key("PK").begins_with("ENTERPRISE#"),
+        "IndexName": "GSI1",
+        "KeyConditionExpression": "GSI1PK = :pk_val",
+        "ExpressionAttributeValues": {
+            ":pk_val": "TYPE#ENTERPRISE",
+        },
         "ScanIndexForward": ascending,
     }
     if limit:

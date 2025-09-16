@@ -4,7 +4,7 @@ import logging
 
 from app.dependencies import check_creating_license_enterprise_allowed, check_admin
 from app.user import User
-from backend.app.routes.schemas.entreprise_schema import (
+from app.routes.schemas.entreprise_schema import (
     EnterpriseInput, 
     EnterpriseOutput, 
     # EnterpriseUpdate, 
@@ -60,7 +60,7 @@ def get_all_enterprises(
     """Get all enterprises. The order is descending by `contract_end_date`.
     - If `limit` is specified, only the first n enterprises will be returned.
     """
-    logger.info(f" GET /enterprise")
+    logger.info(" GET /enterprise")
 
     current_user: User = request.state.current_user
 
@@ -72,7 +72,7 @@ def get_all_enterprises(
             id=enterprise.id,
             name=enterprise.name,
             industry=enterprise.industry,
-            size=enterprise.size,
+            #size=enterprise.size,
             website=enterprise.website,
             status=enterprise.status,
             subscription_tier=enterprise.subscription_tier,
@@ -83,6 +83,7 @@ def get_all_enterprises(
         )
         for enterprise in enterprises
     ]
+    logger.info(f"get_all_enterprises - GET /enterprise output: {output}")
     return output
 
 
