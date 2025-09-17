@@ -46,7 +46,8 @@ def store_enterprise(user_id: str, custom_enterprise: EnterpriseModel):
     item = {
         "PK": f"ENTERPRISE#{custom_enterprise.id}",
         "SK": "METADATA",
-        #"id": custom_enterprise.id,
+        "GSI1PK": "TYPE#ENTERPRISE",
+        "GSI1SK": custom_enterprise.contract_end_date,
         "name": custom_enterprise.name,
         "industry": custom_enterprise.industry,
         "size": custom_enterprise.size,
@@ -65,7 +66,6 @@ def store_enterprise(user_id: str, custom_enterprise: EnterpriseModel):
         "updated_date": custom_enterprise.updated_date,
         "cognito_group_name": custom_enterprise.cognito_group_name,
         "created_by": custom_enterprise.created_by,
-
     }
 
     response = table.put_item(Item=item)
