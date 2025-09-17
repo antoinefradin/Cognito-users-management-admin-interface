@@ -11,14 +11,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { EnterpriseType } from "@/entities/EnterpriseSchema";
+//import type { EnterpriseType } from "@/entities/EnterpriseSchema";
+import type { EnterpriseMeta} from '@/@types/enterprise.d';
+
 
 
 // Added interface to define the props structure for the component
 interface EnterpriseCardProps {
-  enterprise: EnterpriseType;
-  onEdit: (enterprise: EnterpriseType) => void;
-  onViewLicenses: (enterprise: EnterpriseType) => void;
+  enterprise: EnterpriseMeta;
+  onEdit: (enterprise: EnterpriseMeta) => void;
+  onViewLicenses: (enterprise: EnterpriseMeta) => void;
 }
 
 // Changed from default export function to React.FC with explicit prop typing
@@ -52,7 +54,7 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
   };
 
   // Added explicit type annotation for license usage calculation
-  const licenseUsagePercentage: number = (enterprise.used_licenses / enterprise.max_licenses) * 100;
+  const licenseUsagePercentage: number = (enterprise.usedLicenses / enterprise.maxLicenses) * 100;
 
 
   return (
@@ -97,15 +99,15 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
           <Badge className={getStatusColor(enterprise.status)}>
             {enterprise.status}
           </Badge>
-          <Badge variant="outline" className={getTierColor(enterprise.subscription_tier)}>
-            {enterprise.subscription_tier}
+          <Badge variant="outline" className={getTierColor(enterprise.subscriptionTier)}>
+            {enterprise.subscriptionTier}
           </Badge>
         </div>
 
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="flex items-center gap-2 text-gray-600">
             <Users className="w-4 h-4" />
-            <span>{enterprise.used_licenses}/{enterprise.max_licenses} licenses</span>
+            <span>{enterprise.usedLicenses}/{enterprise.maxLicenses} licenses</span>
           </div>
           {enterprise.website && (
             <div className="flex items-center gap-2 text-gray-600">
@@ -113,10 +115,10 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
               <span className="truncate">{enterprise.website}</span>
             </div>
           )}
-          {enterprise.contract_end_date && (
+          {enterprise.contractEndDate && (
             <div className="flex items-center gap-2 text-gray-600 col-span-2">
               <Calendar className="w-4 h-4" />
-              <span>Contract ends {format(new Date(enterprise.contract_end_date), 'MMM d, yyyy')}</span>
+              <span>Contract ends {format(new Date(enterprise.contractEndDate), 'MMM d, yyyy')}</span>
             </div>
           )}
         </div>
@@ -138,10 +140,10 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
         </div>
 
         {/* Added type-safe check for monthly_revenue existence and value */}
-        {enterprise.monthly_revenue !== undefined && enterprise.monthly_revenue >= 0 && (
+        {enterprise.monthlyRevenue !== undefined && enterprise.monthlyRevenue >= 0 && (
           <div className="pt-2 border-t border-gray-100">
             <span className="text-sm text-gray-600">Monthly Revenue: </span>
-            <span className="font-semibold text-green-600">${enterprise.monthly_revenue.toLocaleString()}</span>
+            <span className="font-semibold text-green-600">${enterprise.monthlyRevenue.toLocaleString()}</span>
           </div>
         )}
       </CardContent>

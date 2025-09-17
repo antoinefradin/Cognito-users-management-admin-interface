@@ -97,19 +97,19 @@ const Enterprises: React.FC = () => {
   //   }
   // };
 
-  // Edit enterprise handle button - TO DO
+  // Edit enterprise - TO DO
   const handleEdit = (enterprise: EnterpriseType): void => {
     //setEditingEnterprise(enterprise);
     setShowForm(true);
   };
 
-  // View licenses handle button - TO DO
+  // View licenses - TO DO
   const handleViewLicenses = (enterprise: EnterpriseType): void => {
     // This would navigate to licenses page with enterprise filter
     console.log('View licenses for:', enterprise.name);
   };
 
-  // Added proper typing for the filter function
+  // Filter Search
   const filteredEnterprises: EnterpriseMeta[] = enterprises.filter((enterprise: EnterpriseMeta) => {
     const matchesSearch = enterprise.name.toLowerCase().includes(searchTerm.toLowerCase()); // ||
                         // enterprise.contact_email.toLowerCase().includes(searchTerm.toLowerCase());
