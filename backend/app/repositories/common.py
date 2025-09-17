@@ -38,8 +38,8 @@ def compose_enterprise_id(user_id: str, enterprise_id: str):
     return f"{user_id}#ENTERPRISE#{enterprise_id}"
 
 
-# def decompose_bot_id(composed_bot_id: str):
-#     return composed_bot_id.split("#")[-1]
+def decompose_enterprise_id(composed_enterprise_id: str):
+    return composed_enterprise_id.split("#")[-1]
 
 
 # def compose_bot_alias_id(user_id: str, alias_id: str):

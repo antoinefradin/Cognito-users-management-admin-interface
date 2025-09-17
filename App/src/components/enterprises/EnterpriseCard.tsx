@@ -64,12 +64,14 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
               <Building2 className="w-5 h-5 text-blue-600" />
             </div>
             <div>
+              {/* Card Title */}
               <CardTitle className="text-lg font-semibold text-gray-900 mb-1">
                 {enterprise.name}
               </CardTitle>
               <p className="text-sm text-gray-500 capitalize">{enterprise.industry}</p>
             </div>
           </div>
+          {/* Card Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">

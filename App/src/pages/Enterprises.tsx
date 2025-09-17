@@ -22,18 +22,27 @@ import type { EnterpriseMeta, GetEnterpriseResponse} from '@/@types/enterprise.d
 type StatusFilter = "all" | "active" | "trial" | "inactive" | "suspended";
 type TierFilter = "all" | "basic" | "private";
 
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
 const Enterprises: React.FC = () => {  
+
+  // ========================================================================
+  // HOOKS
+  // ========================================================================
   const navigate = useNavigate();
-  const { getEnterprise } = useEnterprise();
+  const { getEnterprises } = useEnterprise();
   const [enterprises, setEnterprises] = useState<EnterpriseMeta[]>([]);
   const [licenses, setLicenses] = useState<LicenseType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [hasProcessed, setHasProcessed] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
   //const [editingEnterprise, setEditingEnterprise] = useState<EnterpriseType | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
-
 
   // SWR hook 
   /* getEnterprise() returns an SWR object with this structure:
@@ -45,66 +54,32 @@ const Enterprises: React.FC = () => {
     isValidating: boolean,                      // Validation state
     // ... other SWR properties
   }*/
-  const { data: enterpriseResponse } = getEnterprise();
+  const { data: enterpriseResponse } = getEnterprises();
 
-// Effet pour traiter les données quand elles arrivent
-useEffect(() => {
-  setIsLoading(true);
-
-  if (enterpriseResponse && !isLoading) {
-    try {
-      //const enterpriseData = enterpriseResponse.data;
-      console.log(enterpriseResponse);
-      
-      // Update used licenses count for each enterprise
-      // const enterprisesWithUsage: EnterpriseMeta[] = enterpriseData.enterprises.map((enterprise: EnterpriseMeta) => ({
-      //   ...enterprise,
-      //   used_licenses: enterpriseData.licenses.filter((license: any) => 
-      //     license.enterprise_id === enterprise.id && license.status === 'active'
-      //   ).length
-      // }));
-      
-      // setEnterprises(enterprisesWithUsage);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error processing data:', error as Error);
-      setIsLoading(false);
+  useEffect(() => {
+    if (enterpriseResponse && !hasProcessed) {
+      try {
+        console.log('🏭 Données entreprises reçues:', enterpriseResponse);
+        
+        setEnterprises(enterpriseResponse);
+        // const processedData = processEnterpriseData(enterpriseResponse.data);
+        
+        setHasProcessed(true);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('❌ Error from getEnterprises(): ', error as Error);
+        setHasProcessed(true);
+        setIsLoading(false);
+      }
     }
-  }
-}, [enterpriseResponse]);
-  // useEffect(() => {
-  //   loadData();
-  // }, []);
+  }, [enterpriseResponse, hasProcessed]);
 
-  // // Load the existing enterprises in database
-  // const loadData = async (): Promise<void> => {
-  //   setIsLoading(true);
 
-  //   try {
-  //     // API call
-  //     const response = await getEnterprise();
-  //     const enterpriseData = response.data;
 
-  //     console.log(enterpriseData);
-  //     // Update used licenses count for each enterprise
-  //     // Added proper typing for the map function
-  //     // const enterprisesWithUsage: EnterpriseType[] = enterpriseData.map((enterprise: EnterpriseType) => ({
-  //     //   ...enterprise,
-  //     //   used_licenses: licenseData.filter((license: LicenseType) => 
-  //     //     license.enterprise_id === enterprise.id && license.status === 'active'
-  //     //   ).length
-  //     // }));
-      
-  //     //setEnterprises(enterprisesWithUsage);
-  //     //setLicenses(licenseData);
-  //   } catch (error) {
-  //     // Added proper error typing
-  //     console.error('Error loading data:', error as Error);
-  //   }
-  //   setIsLoading(false);
-  // };
-
-  // 
+  // ========================================================================
+  // HANDLERS
+  // ========================================================================
+  
   // const handleSaveEnterprise = async (enterpriseData: Partial<EnterpriseType>): Promise<void> => {
   //   try {
   //     if (editingEnterprise) {

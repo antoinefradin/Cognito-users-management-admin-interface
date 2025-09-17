@@ -21,7 +21,7 @@ const useBotApi = () => {
   const http = useHttp();
 
   return {
-    getEnterprise: (
+    getEnterprises: (
       refreshIntervalFunction?: (data?: GetEnterpriseResponse) => number
     ) => {
       return http.get<GetEnterpriseResponse>(['enterprise'], {
