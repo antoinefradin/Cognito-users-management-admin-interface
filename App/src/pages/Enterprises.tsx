@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { Enterprise } from "@/entities/Enterprise";
-import { License } from "@/entities/License";
+// import { Enterprise } from "@/entities/Enterprise";
+// import { License } from "@/entities/License";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,8 +11,8 @@ import { Plus, Search, Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import EnterpriseCard from "@/components/enterprises/EnterpriseCard";
 import EnterpriseForm from "@/components/enterprises/EnterpriseForm";
-import type { EnterpriseType } from "@/entities/EnterpriseSchema";
-import type { LicenseType } from "@/entities/LicenseSchema";
+// import type { EnterpriseType } from "@/entities/EnterpriseSchema";
+// import type { LicenseType } from "@/entities/LicenseSchema";
 import useEnterprise from "@/hooks/useEnterpriseApi";
 import type { EnterpriseMeta, GetEnterpriseResponse} from '@/@types/enterprise.d';
 
@@ -39,7 +39,6 @@ const Enterprises: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
-  //const [editingEnterprise, setEditingEnterprise] = useState<EnterpriseType | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
@@ -62,7 +61,6 @@ const Enterprises: React.FC = () => {
         console.log('🏭 Données entreprises reçues:', enterpriseResponse);
         
         setEnterprises(enterpriseResponse);
-        // const processedData = processEnterpriseData(enterpriseResponse.data);
         
         setHasProcessed(true);
         setIsLoading(false);
@@ -112,11 +110,11 @@ const Enterprises: React.FC = () => {
   };
 
   // Added proper typing for the filter function
-  const filteredEnterprises: EnterpriseType[] = enterprises.filter((enterprise: EnterpriseType) => {
-    const matchesSearch = enterprise.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         enterprise.contact_email.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredEnterprises: EnterpriseMeta[] = enterprises.filter((enterprise: EnterpriseMeta) => {
+    const matchesSearch = enterprise.name.toLowerCase().includes(searchTerm.toLowerCase()); // ||
+                        // enterprise.contact_email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || enterprise.status === statusFilter;
-    const matchesTier = tierFilter === "all" || enterprise.subscription_tier === tierFilter;
+    const matchesTier = tierFilter === "all" || enterprise.subscriptionTier === tierFilter;
     
     return matchesSearch && matchesStatus && matchesTier;
   });
