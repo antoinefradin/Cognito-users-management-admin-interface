@@ -15,9 +15,12 @@ from app.repositories.enterprise_repository import (
     get_enterprises_by_contract_end_date,
     find_enterprise_by_id,
     update_enterprise,
+    is_enterprise_exists,
 )
-from app.repositories.common import decompose_enterprise_id
-
+from app.repositories.common import (
+    RecordNotFoundError, 
+    decompose_enterprise_id,
+)
 from app.utils import (
     get_current_time,
 )
@@ -78,7 +81,7 @@ def modify_enterprise(user_id: str, enterprise_id: str, modify_input: Enterprise
     logger.info(f"update_enterprise() function")
     logger.info(f"Updating enterprise: {enterprise_id}")
 
-    if find_enterprise_by_id(enterprise_id):
+    if is_enterprise_exists(enterprise_id):
         update_enterprise(
             enterprise_id=enterprise_id,
             contract_start_date=modify_input.contract_start_date,
@@ -142,5 +145,14 @@ def fetch_all_enterprises(limit: int = 20) -> list[EnterpriseMeta]:
                 monthly_revenue=item["monthly_revenue"],
             )
         )
-
     return enterprises
+
+
+def fetch_enterprise(enterprise_id: str) -> EnterpriseModel:
+    """Fetch enterprise by id."""
+    try:
+        return find_enterprise_by_id(enterprise_id)
+    except RecordNotFoundError:
+        raise RecordNotFoundError(
+            f"Enterprise with ID {enterprise_id} not found in database items."
+        )

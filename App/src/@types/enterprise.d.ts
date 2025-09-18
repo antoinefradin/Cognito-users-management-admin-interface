@@ -51,6 +51,16 @@ export type EnterpriseMeta = {
 //   updatedDate: string;
 }
 
+export type EnterpriseDetails = EnterpriseMeta & {
+  size: CompanySizeEnum;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
+  contractStartDate: string;
+  createdDate: string;
+  updatedDate: string;
+};
+
 
 export type RegisterEnterpriseRequest = {
   id: string;
@@ -75,6 +85,42 @@ export type RegisterEnterpriseResponse = RegisterEnterpriseRequest & {
   updatedAt: string;
 };
 
+export type UpdateEnterpriseRequest = {
+  industry?: IndustryEnum;
+  size?: CompanySizeEnum;
+  contactEmail: string;
+  contactPhone?: string;
+  address?: string;
+  website?: string;
+  status: EnterpriseStatusEnum;
+  subscriptionTier: SubscriptionTierEnum;
+  maxLicenses: number;
+  usedLicenses: number;
+  contractStartDate: string;
+  contractEndDate?: string;
+  monthlyRevenue?: number;
+};
+
+export type UpdateEnterpriseResponse = {
+  id: string;
+  name: string;
+  industry?: IndustryEnum;
+  size?: CompanySizeEnum;
+  contactEmail: string;
+  contactPhone?: string;
+  address?: string;
+  website?: string;
+  status: EnterpriseStatusEnum;
+  subscriptionTier: SubscriptionTierEnum;
+  maxLicenses: number;
+  usedLicenses: number;
+  contractStartDate: string;
+  contractEndDate?: string;
+  monthlyRevenue?: number;
+};
 
 
-export type GetEnterpriseResponse = EnterpriseMeta[]
+
+export type GetEnterprisesResponse = EnterpriseMeta[];
+
+export type GetEnterpriseResponse = EnterpriseDetails;

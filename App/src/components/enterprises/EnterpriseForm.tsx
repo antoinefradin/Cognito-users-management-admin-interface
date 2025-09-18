@@ -567,8 +567,8 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
             </Button>
             
             <Button 
-              type="button"  // Changé de "submit" à "button"
-              onClick={onClickCreate}  // Ajout du callback
+              type="button"  
+              onClick={onClickCreate}
               className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
               disabled={isLoading}
             >

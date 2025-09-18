@@ -15,6 +15,7 @@ from app.services.enterprise_service import (
      create_new_enterprise,
      modify_enterprise,
      fetch_all_enterprises,
+     fetch_enterprise,
 )
 
 
@@ -53,7 +54,12 @@ def create_enterprise(
 
 
 @router.patch("/enterprise/{enterprise_id}")
-def patch_enterprise(request: Request, enterprise_id: str, modify_input: EnterpriseModifyInput, response_model=EnterpriseModifyOutput):
+def patch_enterprise(
+    request: Request,
+    enterprise_id: str,
+    modify_input: EnterpriseModifyInput,
+    response_model=EnterpriseModifyOutput
+):
     """Modify  Enterprise info"""
     return modify_enterprise(request.state.current_user.id, enterprise_id, modify_input)
 
@@ -69,8 +75,6 @@ def get_all_enterprises(
     - If `limit` is specified, only the first n enterprises will be returned.
     """
     logger.info(" GET /enterprise")
-
-    current_user: User = request.state.current_user
 
     enterprises = []
     enterprises = fetch_all_enterprises(limit=limit)
@@ -92,6 +96,39 @@ def get_all_enterprises(
         for enterprise in enterprises
     ]
     logger.info(f"get_all_enterprises - GET /enterprise output: {output}")
+    return output
+
+
+@router.get("/enterprise/{enterprise_id}", response_model=EnterpriseOutput)
+def get_enterprise_by_id(
+    request: Request,
+    check_admin_permissions=Depends(check_admin),
+):
+    """Get enterprise by id."""
+    logger.info("GET /enterprise/enterprise_id")
+
+    enterprise = fetch_enterprise()
+
+    output = EnterpriseOutput(
+        id=enterprise.id,
+        name=enterprise.name,
+        industry=enterprise.industry,
+        size=enterprise.size,
+        contact_email=enterprise.contact_email,
+        address=enterprise.address,
+        website=enterprise.website,
+        status=enterprise.status,
+        subscription_tier=enterprise.subscription_tier,
+        max_licenses=enterprise.max_licenses,
+        used_licenses=enterprise.used_licenses,
+        contract_start_date=enterprise.contract_start_date,
+        contract_end_date=enterprise.contract_end_date,
+        monthly_revenue=enterprise.monthly_revenue,
+        created_date=enterprise.created_date,
+        updated_date=enterprise.updated_date,
+    )
+    
+    logger.info(f"get_enterprise_by_id - GET /enterprise output: {output}")
     return output
 
 

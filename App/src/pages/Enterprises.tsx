@@ -14,7 +14,7 @@ import EnterpriseForm from "@/components/enterprises/EnterpriseForm";
 // import type { EnterpriseType } from "@/entities/EnterpriseSchema";
 // import type { LicenseType } from "@/entities/LicenseSchema";
 import useEnterprise from "@/hooks/useEnterpriseApi";
-import type { EnterpriseMeta, GetEnterpriseResponse} from '@/@types/enterprise.d';
+import type { EnterpriseMeta, EnterpriseDetails} from '@/@types/enterprise.d';
 
 
 
@@ -33,15 +33,17 @@ const Enterprises: React.FC = () => {
   // HOOKS
   // ========================================================================
   const navigate = useNavigate();
-  const { getEnterprises } = useEnterprise();
+  const { getEnterprises, getEnterprise } = useEnterprise();
   const [enterprises, setEnterprises] = useState<EnterpriseMeta[]>([]);
-  const [licenses, setLicenses] = useState<LicenseType[]>([]);
+  //const [licenses, setLicenses] = useState<LicenseType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
+  const [formMode, setFormMode] = useState<'create' | 'update'>('create');
+  const [editingEnterprise, setEditingEnterprise] = useState<EnterpriseDetails>();
 
   // SWR hook 
   /* getEnterprise() returns an SWR object with this structure:
@@ -53,14 +55,14 @@ const Enterprises: React.FC = () => {
     isValidating: boolean,                      // Validation state
     // ... other SWR properties
   }*/
-  const { data: enterpriseResponse } = getEnterprises();
+  const { data: enterprisesResponse } = getEnterprises();
 
   useEffect(() => {
-    if (enterpriseResponse && !hasProcessed) {
+    if (enterprisesResponse && !hasProcessed) {
       try {
-        console.log('🏭 Données entreprises reçues:', enterpriseResponse);
+        console.log('🏭 Données entreprises reçues:', enterprisesResponse);
         
-        setEnterprises(enterpriseResponse);
+        setEnterprises(enterprisesResponse);
         
         setHasProcessed(true);
         setIsLoading(false);
@@ -70,7 +72,7 @@ const Enterprises: React.FC = () => {
         setIsLoading(false);
       }
     }
-  }, [enterpriseResponse, hasProcessed]);
+  }, [enterprisesResponse, hasProcessed]);
 
 
 
@@ -78,33 +80,24 @@ const Enterprises: React.FC = () => {
   // HANDLERS
   // ========================================================================
   
-  // const handleSaveEnterprise = async (enterpriseData: Partial<EnterpriseType>): Promise<void> => {
-  //   try {
-  //     if (editingEnterprise) {
-  //       await Enterprise.update(editingEnterprise.id!, enterpriseData);
-  //     } else {
-  //       await Enterprise.create({
-  //         ...enterpriseData,
-  //         used_licenses: 0
-  //       });
-  //     }
-  //     setShowForm(false);
-  //     setEditingEnterprise(null);
-  //     loadData();
-  //   } catch (error) {
-  //     // Added proper error typing
-  //     console.error('Error saving enterprise:', error as Error);
-  //   }
-  // };
+  // Edit enterprise
+  const handleEdit = async (enterprise: EnterpriseMeta): Promise<void> => {
+    try {
+      // Utiliser fetchEnterprise au lieu de getEnterprise
+      const enterpriseDetails = await getEnterprise(enterprise.id);
+      console.log('🏭 EnterpriseDetails from getEnterprises(): ', enterpriseDetails)
+      setEditingEnterprise(enterpriseDetails);
+      setFormMode('update');
+      setShowForm(true);
 
-  // Edit enterprise - TO DO
-  const handleEdit = (enterprise: EnterpriseType): void => {
-    //setEditingEnterprise(enterprise);
-    setShowForm(true);
+    } catch (error) {
+        console.error('❌ Error from getEnterprises() retrieval: ', error);
+    }
   };
 
+
   // View licenses - TO DO
-  const handleViewLicenses = (enterprise: EnterpriseType): void => {
+  const handleViewLicenses = (enterprise: EnterpriseMeta): void => {
     // This would navigate to licenses page with enterprise filter
     console.log('View licenses for:', enterprise.name);
   };
@@ -167,19 +160,26 @@ const Enterprises: React.FC = () => {
               className="mb-8"
             >
               <EnterpriseForm
-                //enterprise={editingEnterprise}
-                onSuccess={(data) => {
+                mode={formMode}
+                enterprise={editingEnterprise}
+                onSuccess={(registerEnterprise) => {
+                  console.log('✅ Enterprise saved successfully:', registerEnterprise);
+
                   setShowForm(false);
-                  
+                  //setEditingEnterprise();
+                  setFormMode('create');
+
                   // Optional : refresh the enterpries list
                   //refreshEnterprises?.();
                 }}
                 onError={(error) => {
-                  console.error('Enterprise save failed:', error);
+                  console.error('❌ Enterprise save failed:', error);
                 }}
                 onCancel={() => {
+                  console.log('🚫 Enterprise form cancelled');
                   setShowForm(false);
                   //setEditingEnterprise(null);
+                  setFormMode('create');
                 }}
               />
             </motion.div>

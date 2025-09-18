@@ -170,12 +170,12 @@ def update_enterprise(
 
 
 
-def find_enterprise_by_id(enterprise_id: str) -> bool:
+
+def find_enterprise_by_id(enterprise_id: str) -> EnterpriseModel:
     """Find enterprise."""
     table = _get_table_public_client()
     logger.info(f"Finding enterprise with id: {enterprise_id}")
 
-    # Validation optionnelle de l'existence
     existing_item = table.get_item(
         Key={
             "PK": f"{enterprise_id}",
@@ -185,4 +185,41 @@ def find_enterprise_by_id(enterprise_id: str) -> bool:
     if len(existing_item["Items"]) == 0:
         raise RecordNotFoundError(f"Enterprise {enterprise_id} not found")
     
+    return EnterpriseModel(
+        id=existing_item["PK"],
+        name=existing_item["Name"],
+        industry=existing_item["Industry"],
+        size=existing_item["Size"],
+        contact_email=existing_item["ContactEmail"],
+        contact_phone=existing_item["ContactPhone"],
+        address=existing_item["Address"],
+        website=existing_item["Website"],
+        status=existing_item["Status"],
+        subscription_tier=existing_item["SubscriptionTier"],
+        max_licenses=existing_item["MaxLicenses"],
+        used_licenses=existing_item["UsedLicenses"],
+        contract_start_date=existing_item["ContractStartDate"],
+        contract_end_date=existing_item["ContractEndDate"],
+        monthly_revenue=existing_item["MonthlyRevenue"],
+        created_date=existing_item["CreatedDate"],
+        updated_date=existing_item["UpdatedDate"],
+        cognito_group_name=existing_item["CognitoGroupName"],
+        created_by=existing_item["CreatedBy"],
+        updated_by=existing_item["UpdatedBy"],
+    )
+
+
+def is_enterprise_exists(enterprise_id: str) -> bool:
+    """Find enterprise."""
+    table = _get_table_public_client()
+    logger.info(f"Check if enterprise with id exists: {enterprise_id}")
+
+    existing_item = table.get_item(
+        Key={
+            "PK": f"{enterprise_id}",
+            "SK": "ENTERPRISE#{enterprise_id}"
+        }
+    )
+    if len(existing_item["Items"]) == 0:
+        raise RecordNotFoundError(f"Enterprise {enterprise_id} not found")
     return True

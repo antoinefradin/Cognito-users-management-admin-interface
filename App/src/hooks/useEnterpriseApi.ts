@@ -7,6 +7,7 @@ import type {
 //   GetPresignedUrlResponse,
   RegisterEnterpriseRequest,
   RegisterEnterpriseResponse,
+  GetEnterprisesResponse,
   GetEnterpriseResponse,
 //   UpdateBotPinnedRequest,
 //   UpdateBotPinnedResponse,
@@ -22,17 +23,17 @@ const useBotApi = () => {
 
   return {
     getEnterprises: (
-      refreshIntervalFunction?: (data?: GetEnterpriseResponse) => number
+      refreshIntervalFunction?: (data?: GetEnterprisesResponse) => number
     ) => {
-      return http.get<GetEnterpriseResponse>(['enterprise'], {
+      return http.get<GetEnterprisesResponse>(['enterprise'], {
         refreshInterval: refreshIntervalFunction,
       });
     },
-    // getOnceMyBot: (botId: string) => {
-    //   return http.getOnce<GetMyBotResponse>(`bot/private/${botId}`);
-    // },
-    // getMyBot: (botId?: string) => {
-    //   return http.get<GetMyBotResponse>(botId ? `bot/private/${botId}` : null);
+    getEnterprise: (enterpriseId: string) => {
+      return http.getOnce<GetEnterpriseResponse>(`enterprise/${enterpriseId}`);
+    },
+    // getEnterprise: (enterpriseId?: string) => {
+    //   return http.get<GetEnterpriseResponse>(enterpriseId ? `enterprise/${enterpriseId}` : null);
     // },
     // botSummary: (botId?: string) => {
     //   return http.get<GetBotSummaryResponse>(
