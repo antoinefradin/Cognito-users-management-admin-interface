@@ -134,15 +134,15 @@ def fetch_all_enterprises(limit: int = 20) -> list[EnterpriseMeta]:
         enterprises.append(
             EnterpriseMeta(
                 id=decompose_enterprise_id(item["SK"]),
-                name=item["name"],
-                industry=item["industry"],
-                website=item["website"],
-                status=item["status"],
-                subscription_tier=item["subscription_tier"],
-                max_licenses=item["max_licenses"],
-                used_licenses=item["used_licenses"],
-                contract_end_date=item["contract_end_date"],
-                monthly_revenue=item["monthly_revenue"],
+                name=item["Name"],
+                industry=item["Industry"],
+                website=item["Website"],
+                status=item["Status"],
+                subscription_tier=item["SubscriptionTier"],
+                max_licenses=item["MaxLicenses"],
+                used_licenses=item["UsedLicenses"],
+                contract_end_date=item["ContractEndDate"],
+                monthly_revenue=item["MonthlyRevenue"],
             )
         )
     return enterprises
