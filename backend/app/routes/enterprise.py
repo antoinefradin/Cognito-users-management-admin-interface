@@ -7,11 +7,13 @@ from app.user import User
 from app.routes.schemas.entreprise_schema import (
     EnterpriseInput, 
     EnterpriseOutput, 
-    # EnterpriseUpdate, 
+    EnterpriseModifyInput,
+    EnterpriseModifyOutput,
     EnterpriseMetaOutput,
 )
 from app.services.enterprise_service import (
      create_new_enterprise,
+     modify_enterprise,
      fetch_all_enterprises,
 )
 
@@ -46,8 +48,14 @@ def create_enterprise(
     )
     # 2. Background task (async)
     #background_tasks.add_task(sync_cognito_group, enterprise.id)
-    
     return enterprise
+
+
+
+@router.patch("/enterprise/{enterprise_id}")
+def patch_enterprise(request: Request, enterprise_id: str, modify_input: EnterpriseModifyInput, response_model=EnterpriseModifyOutput):
+    """Modify  Enterprise info"""
+    return modify_enterprise(request.state.current_user.id, enterprise_id, modify_input)
 
 
 

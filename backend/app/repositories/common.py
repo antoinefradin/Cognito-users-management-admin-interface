@@ -33,9 +33,9 @@ class ResourceConflictError(Exception):
 #     return conv_id.split("#")[-1]
 
 
-def compose_enterprise_id(user_id: str, enterprise_id: str):
+def compose_enterprise_id(enterprise_id: str):
     # Add user_id prefix for row level security to match with `LeadingKeys` condition
-    return f"{user_id}#ENTERPRISE#{enterprise_id}"
+    return f"ENTERPRISE#{enterprise_id}"
 
 
 def decompose_enterprise_id(composed_enterprise_id: str):

@@ -3,10 +3,8 @@ import logging
 from app.routes.schemas.entreprise_schema import (
     EnterpriseInput,
     EnterpriseOutput,
-    IndustryEnum,
-    CompanySizeEnum,
-    EnterpriseStatusEnum,
-    SubscriptionTierEnum,
+    EnterpriseModifyInput,
+    EnterpriseModifyOutput,
 )
 from app.repositories.models.enterprise_model import (
     EnterpriseModel,
@@ -14,7 +12,9 @@ from app.repositories.models.enterprise_model import (
 )
 from app.repositories.enterprise_repository import (
     store_enterprise,
-    get_enterprises_by_contract_end_date
+    get_enterprises_by_contract_end_date,
+    find_enterprise_by_id,
+    update_enterprise,
 )
 from app.repositories.common import decompose_enterprise_id
 
@@ -27,23 +27,18 @@ logger = logging.getLogger(__name__)
 
 def create_new_enterprise(user_id: str, enterprise_input: EnterpriseInput) -> EnterpriseOutput:
     """Create a new enterprise."""
-
-    logger.info(f"create_new_enterprise() function")
-    logger.info(f"Create enterprise: {enterprise_input}") 
-
     current_time = get_current_time()
-    
     store_enterprise(
         user_id,
         EnterpriseModel(
             id=enterprise_input.id,
             name=enterprise_input.name,
             industry=enterprise_input.industry,
-            size=enterprise_input.size, #  if enterprise_input.size else "enterprise",
+            size=enterprise_input.size,
             contact_email=enterprise_input.contact_email,
-            contact_phone=enterprise_input.contact_phone, # if enterprise_input.contact_phone else "",
-            address=enterprise_input.address, # if enterprise_input.address else "",
-            website=enterprise_input.website, # if enterprise_input.website else "",
+            contact_phone=enterprise_input.contact_phone, 
+            address=enterprise_input.address, 
+            website=enterprise_input.website, 
             status=enterprise_input.status,
             subscription_tier=enterprise_input.subscription_tier,
             max_licenses=enterprise_input.max_licenses,
@@ -53,7 +48,6 @@ def create_new_enterprise(user_id: str, enterprise_input: EnterpriseInput) -> En
             monthly_revenue=enterprise_input.monthly_revenue,
 
             created_date=current_time,
-            updated_date=current_time,
             cognito_group_name= enterprise_input.name.replace(" ", "").upper(),
             created_by=user_id
         ),
@@ -74,10 +68,53 @@ def create_new_enterprise(user_id: str, enterprise_input: EnterpriseInput) -> En
         contract_start_date=enterprise_input.contract_start_date,
         contract_end_date=enterprise_input.contract_end_date,
         monthly_revenue=enterprise_input.monthly_revenue,
-
         created_date=current_time,
-        updated_date=current_time,
     )
+
+def modify_enterprise(user_id: str, enterprise_id: str, modify_input: EnterpriseModifyInput) -> EnterpriseModifyOutput:
+    """Update an existing enterprise."""
+    current_time = get_current_time()
+
+    logger.info(f"update_enterprise() function")
+    logger.info(f"Updating enterprise: {enterprise_id}")
+
+    if find_enterprise_by_id(enterprise_id):
+        update_enterprise(
+            enterprise_id=enterprise_id,
+            contract_start_date=modify_input.contract_start_date,
+            updated_date=current_time,
+            updated_by=user_id,
+            industry=modify_input.industry,
+            size=modify_input.size,
+            status=modify_input.status,
+            contact_email=modify_input.contact_email,
+            contact_phone=modify_input.contact_phone,
+            address=modify_input.address,
+            website=modify_input.website,
+            subscription_tier=modify_input.subscription_tier,
+            max_licenses=modify_input.max_licenses,
+            used_licenses=modify_input.used_licenses,
+            monthly_revenue=modify_input.monthly_revenue,
+            contract_end_date=modify_input.contract_end_date,
+        )
+    return EnterpriseModifyOutput(
+        id=enterprise_id,
+        name=modify_input.name,
+        industry=modify_input.industry,
+        size=modify_input.size,
+        contact_email=modify_input.contact_email,
+        contact_phone=modify_input.contact_phone,
+        address=modify_input.address,
+        website=modify_input.website,
+        status=modify_input.status,
+        subscription_tier=modify_input.subscription_tier,
+        max_licenses=modify_input.max_licenses,
+        used_licenses=modify_input.used_licenses,
+        contract_start_date=modify_input.contract_start_date,
+        contract_end_date=modify_input.contract_end_date,
+        monthly_revenue=modify_input.monthly_revenue,
+        updated_date=current_time,
+        )
 
 
 def fetch_all_enterprises(limit: int = 20) -> list[EnterpriseMeta]:
@@ -89,8 +126,6 @@ def fetch_all_enterprises(limit: int = 20) -> list[EnterpriseMeta]:
 
     response = get_enterprises_by_contract_end_date(limit = limit)
 
-    # logger.info(f"get all reponse:{response}")
-    # logger.info(f"get all reponse items:{response["Items"]}")
     enterprises = []
     for item in response["Items"]:
         enterprises.append(

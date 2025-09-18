@@ -74,37 +74,23 @@ class EnterpriseInput(BaseSchema):
         return v
     
 
-
-class EnterpriseUpdate(BaseSchema):
-    name: Optional[str] = Field(None, description="Company name")
+class EnterpriseModifyInput(BaseSchema):
+    #id: str = Field(..., description="Company id")
+    name: str = Field(..., description="Company name")
     industry: Optional[IndustryEnum] = Field(None, description="Industry sector")
     size: Optional[CompanySizeEnum] = Field(None, description="Company size")
-    contact_email: Optional[EmailStr] = Field(None, description="Primary contact email")
+    contact_email: EmailStr = Field(..., description="Primary contact email")
     contact_phone: Optional[str] = Field(None, description="Contact phone number")
     address: Optional[str] = Field(None, description="Company address")
     website: Optional[str] = Field(None, description="Company website")
-    status: Optional[EnterpriseStatusEnum] = Field(None, description="Enterprise status")
-    subscription_tier: Optional[SubscriptionTierEnum] = Field(None, description="Subscription tier")
-    max_licenses: Optional[int] = Field(None, ge=1, description="Maximum number of licenses allowed")
-    used_licenses: Optional[int] = Field(None, ge=0, description="Currently used licenses")
-    contract_start_date: Optional[str] = Field(None, description="Contract start date (YYYY-MM-DD)")
+    status: EnterpriseStatusEnum = Field(default=EnterpriseStatusEnum.ACTIVE, description="Enterprise status")
+    subscription_tier: SubscriptionTierEnum = Field(default=SubscriptionTierEnum.BASIC, description="Subscription tier")
+    max_licenses: int = Field(..., ge=1, description="Maximum number of licenses allowed")
+    used_licenses: int = Field(default=0, ge=0, description="Currently used licenses")
+    contract_start_date: str = Field(..., description="Contract start date (YYYY-MM-DD)")
     contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
-    monthly_revenue: Optional[int] = Field(None, ge=0, description="Monthly revenue from this enterprise")
+    monthly_revenue: Optional[int] = Field(default=0, ge=0, description="Monthly revenue from this enterprise")
     
-    @validator('website')
-    def validate_website(cls, v):
-        if v and not (v.startswith('http://') or v.startswith('https://')):
-            raise ValueError('Website must be a valid URI starting with http:// or https://')
-        return v
-    
-    @validator('used_licenses')
-    def validate_used_licenses(cls, v, values):
-        if v is not None and 'max_licenses' in values and values['max_licenses'] and v > values['max_licenses']:
-            raise ValueError('Used licenses cannot exceed max licenses')
-        return v
-    
-
-
 
 class EnterpriseOutput(BaseSchema):
     id: str = Field(..., description="Company id")
@@ -125,9 +111,28 @@ class EnterpriseOutput(BaseSchema):
 
     # added
     created_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
+    updated_date: Optional[str] = Field(None,description="Last update date (YYYY-MM-DD)")
+
+
+class EnterpriseModifyOutput(BaseSchema):
+    id: str = Field(..., description="Company id")
+    name: str = Field(..., description="Company name")
+    industry: Optional[IndustryEnum] = Field(None, description="Industry sector")
+    size: Optional[CompanySizeEnum] = Field(None, description="Company size")
+    contact_email: EmailStr = Field(..., description="Primary contact email")
+    contact_phone: Optional[str] = Field(None, description="Contact phone number")
+    address: Optional[str] = Field(None, description="Company address")
+    website: Optional[str] = Field(None, description="Company website")
+    status: EnterpriseStatusEnum = Field(default=EnterpriseStatusEnum.ACTIVE, description="Enterprise status")
+    subscription_tier: SubscriptionTierEnum = Field(default=SubscriptionTierEnum.BASIC, description="Subscription tier")
+    max_licenses: int = Field(..., ge=1, description="Maximum number of licenses allowed")
+    used_licenses: int = Field(default=0, ge=0, description="Currently used licenses")
+    contract_start_date: str = Field(..., description="Contract start date (YYYY-MM-DD)")
+    contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
+    monthly_revenue: Optional[int] = Field(default=0, ge=0, description="Monthly revenue from this enterprise")
     updated_date: str = Field(..., description="Last update date (YYYY-MM-DD)")
 
-
+    
 
 class EnterpriseMetaOutput(BaseSchema):
     id: str = Field(..., description="Company id")

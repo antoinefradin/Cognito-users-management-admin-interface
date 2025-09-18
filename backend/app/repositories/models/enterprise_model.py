@@ -30,9 +30,11 @@ class EnterpriseModel(BaseModel):
 
     # Added
     created_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
-    updated_date: str = Field(..., description="Last update date (YYYY-MM-DD)")
+    updated_date: Optional[str] = Field(None, description="Last update date (YYYY-MM-DD)")
     cognito_group_name: Optional[str] = Field(None, description="Associated Cognito group name") 
     created_by: str = Field(..., description="Cognito User id who created this enterprise")
+    updated_by: Optional[str] = Field(None, description="Last Cognito User id who updated this enterprise")
+
 
     @validator('website')
     def validate_website(cls, v):
