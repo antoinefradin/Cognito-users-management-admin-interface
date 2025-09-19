@@ -5,6 +5,7 @@ from app.routes.schemas.entreprise_schema import (
     EnterpriseOutput,
     EnterpriseModifyInput,
     EnterpriseModifyOutput,
+    EnterpriseMetaOutput,
 )
 from app.repositories.models.enterprise_model import (
     EnterpriseModel,
@@ -16,6 +17,7 @@ from app.repositories.enterprise_repository import (
     find_enterprise_by_id,
     update_enterprise,
     is_enterprise_exists,
+    delete_enterprise_by_id,
 )
 from app.repositories.common import (
     RecordNotFoundError, 
@@ -119,7 +121,6 @@ def modify_enterprise(user_id: str, enterprise_id: str, modify_input: Enterprise
         updated_date=current_time,
         )
 
-
 def fetch_all_enterprises(limit: int = 20) -> list[EnterpriseMeta]:
     """Find all enterprises.
     The order is asceding by `contract_end_date`.
@@ -156,3 +157,17 @@ def fetch_enterprise(enterprise_id: str) -> EnterpriseModel:
         raise RecordNotFoundError(
             f"Enterprise with ID {enterprise_id} not found in database items."
         )
+    
+
+def remove_enterprise_by_id(enterprise_id: str) -> EnterpriseMetaOutput:
+    """Remove an existing enterprise."""
+
+    logger.info(f"remove_enterprise_by_id() function")
+    logger.info(f"Remove enterprise: {enterprise_id}")
+
+    """Remove bot by id."""
+    if is_enterprise_exists(enterprise_id):
+        try:
+            return delete_enterprise_by_id(enterprise_id)
+        except RecordNotFoundError:
+            pass

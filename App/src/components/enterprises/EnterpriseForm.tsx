@@ -54,7 +54,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
   onSuccess,
   onError,
   mode = enterprise ? 'update' : 'create'
-}) => {
+}: EnterpriseFormProps) => {
   
   // ========================================================================
   // HOOKS
@@ -167,6 +167,30 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
     onError
   ]);
 
+  // // ========================================================================
+  // // RESET VALUES - reset all enterprise values
+  // // ========================================================================
+  // const resetEnterpriseToDefaults = () => {
+  //   console.log("B. RESET:",enterprise);
+  //   // Basic Information
+  //   setEnterpriseId(ulid());
+  //   setName('');
+  //   setContactEmail('');
+  //   setContactPhone('');
+  //   setAddress('');
+  //   setWebsite('');
+  //   setIndustry(IndustryEnum.OTHER);
+  //   setSize(CompanySizeEnum.ENTERPRISE);
+  //   setStatus(EnterpriseStatusEnum.ACTIVE);
+  //   setSubscriptionTier(SubscriptionTierEnum.BASIC);
+  //   setMaxLicenses(10);
+  //   setUsedLicenses(0);
+  //   setMonthlyRevenue(0);
+  //   setContractStartDate(new Date().toISOString());
+  //   setContractEndDate(new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString());
+  //   console.log("AFT. RESET:",enterprise);
+  // };
+
   // ========================================================================
   // SUBMIT HANDLER - Following the Bot pattern
   // ========================================================================
@@ -225,6 +249,9 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
     // API call
     apiCall
       .then((response) => {
+        // Success - reset all enterprise values to defaults
+        //resetEnterpriseToDefaults();
+
         // Success - navigate to enterprises list
         onSuccess?.(response.data);
         //navigate('/enterprises');
@@ -239,6 +266,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
       });
   }, [
     isValid,
+    //resetEnterpriseToDefaults,
     updateEnterprise,
     registerEnterprise,
     enterpriseId,

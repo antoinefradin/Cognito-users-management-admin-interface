@@ -33,7 +33,7 @@ const Enterprises: React.FC = () => {
   // HOOKS
   // ========================================================================
   const navigate = useNavigate();
-  const { getEnterprises, getEnterprise } = useEnterprise();
+  const { getEnterprises, getEnterprise, deleteEnterprise } = useEnterprise();
   const [enterprises, setEnterprises] = useState<EnterpriseMeta[]>([]);
   //const [licenses, setLicenses] = useState<LicenseType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -43,7 +43,7 @@ const Enterprises: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [formMode, setFormMode] = useState<'create' | 'update'>('create');
-  const [editingEnterprise, setEditingEnterprise] = useState<EnterpriseDetails>();
+  const [editingEnterprise, setEditingEnterprise] = useState<EnterpriseDetails>() || undefined;
 
   // SWR hook 
   /* getEnterprise() returns an SWR object with this structure:
@@ -94,11 +94,21 @@ const Enterprises: React.FC = () => {
     }
   };
 
-
   // View licenses - TO DO
   const handleViewLicenses = (enterprise: EnterpriseMeta): void => {
     // This would navigate to licenses page with enterprise filter
     console.log('View licenses for:', enterprise.name);
+  };
+
+  // Delete enterprise
+  const handleDelete = async (enterprise: EnterpriseMeta): Promise<void> => {
+    try {
+      console.log('🏭 Deleting Enterprise ...: ');
+      const enterpriseDetails = await deleteEnterprise(enterprise.id);
+      console.log('🏭 Enterprise deleted: ', enterpriseDetails);
+    } catch (error) {
+        console.error('❌ Error from getEnterprises() retrieval: ', error);
+    }
   };
 
   // Filter Search
@@ -115,7 +125,6 @@ const Enterprises: React.FC = () => {
   // ========================================================================
   // RENDER
   // ========================================================================
-
   if (isLoading) {
     return (
       <div className="p-8">
@@ -165,7 +174,7 @@ const Enterprises: React.FC = () => {
                   console.log(`✅ Enterprise ${formMode} successfully:`, registerEnterprise);
 
                   setShowForm(false);
-                  //setEditingEnterprise();
+                  setEditingEnterprise(undefined);
                   setFormMode('create');
 
                   // Optional : refresh the enterpries list
@@ -177,7 +186,7 @@ const Enterprises: React.FC = () => {
                 onCancel={() => {
                   console.log('🚫 Enterprise form cancelled');
                   setShowForm(false);
-                  //setEditingEnterprise(null);
+                  setEditingEnterprise(undefined);
                   setFormMode('create');
                 }}
               />
@@ -238,6 +247,7 @@ const Enterprises: React.FC = () => {
                       enterprise={enterprise}
                       onEdit={handleEdit}
                       onViewLicenses={handleViewLicenses}
+                      onDelete={handleDelete}
                     />
                   </motion.div>
                 ))}

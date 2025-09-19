@@ -16,16 +16,21 @@ import type { EnterpriseMeta} from '@/@types/enterprise.d';
 
 
 
-// Added interface to define the props structure for the component
+// Props
 interface EnterpriseCardProps {
   enterprise: EnterpriseMeta;
   onEdit: (enterprise: EnterpriseMeta) => void;
   onViewLicenses: (enterprise: EnterpriseMeta) => void;
+  onDelete: (enterprise: EnterpriseMeta) => void;
 }
 
-// Changed from default export function to React.FC with explicit prop typing
-const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onViewLicenses }) => {
-  // Added parameter type annotation and return type for status color function
+const EnterpriseCard: React.FC<EnterpriseCardProps> = ({
+  enterprise,
+  onEdit,
+  onViewLicenses,
+  onDelete 
+}: EnterpriseCardProps) => {
+
   const getStatusColor = (status: string): string => {
     switch (status) {
       case 'active':
@@ -41,7 +46,6 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
     }
   };
 
-  // Added parameter type annotation and return type for tier color function
   const getTierColor = (tier: string): string => {
     switch (tier) {
       case 'private':
@@ -53,10 +57,12 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
     }
   };
 
-  // Added explicit type annotation for license usage calculation
   const licenseUsagePercentage: number = (enterprise.usedLicenses / enterprise.maxLicenses) * 100;
 
 
+  // ========================================================================
+  // RENDER
+  // ========================================================================
   return (
     <Card className="bg-white/60 backdrop-blur-xl border border-white/30 hover:shadow-xl transition-all duration-300 shadow-lg group">
       <CardHeader className="pb-4">
@@ -88,6 +94,10 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({ enterprise, onEdit, onV
               <DropdownMenuItem onClick={() => onViewLicenses(enterprise)}>
                 <Users className="w-4 h-4 mr-2" />
                 View Licenses
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete(enterprise)}>
+                <Edit className="w-4 h-4 mr-2" />
+                Delete Enterprise
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

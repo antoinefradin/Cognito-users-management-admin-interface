@@ -1,24 +1,15 @@
 import axios from 'axios';
 import type {
-//   GetBotSummaryResponse,
-//   GetBotsRequest,
-//   GetBotsResponse,
-//   GetMyBotResponse,
-//   GetPresignedUrlResponse,
   RegisterEnterpriseRequest,
   RegisterEnterpriseResponse,
   GetEnterprisesResponse,
   GetEnterpriseResponse,
   UpdateEnterpriseRequest,
   UpdateEnterpriseResponse,
-//   UpdateBotRequest,
-//   UpdateBotResponse,
-//   UpdateBotVisibilityRequest,
-//   UpdateBotVisibilityResponse,
 } from '../@types/enterprise';
 import useHttp from './useHttp';
 
-const useBotApi = () => {
+const useEnterpriseApi = () => {
   const http = useHttp();
 
   return {
@@ -69,9 +60,9 @@ const useBotApi = () => {
     //     params
     //   );
     // },
-    // deleteBot: (botId: string) => {
-    //   return http.delete(`bot/${botId}`);
-    // },
+    deleteEnterprise: (enterpriseId: string) => {
+      return http.delete(`enterprise/${enterpriseId}`);
+    },
     // getPresignedUrl: (botId: string, file: File) => {
     //   return http.getOnce<GetPresignedUrlResponse>(
     //     `bot/${botId}/presigned-url`,
@@ -104,4 +95,4 @@ const useBotApi = () => {
   };
 };
 
-export default useBotApi;
+export default useEnterpriseApi;

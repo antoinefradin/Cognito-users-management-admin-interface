@@ -16,6 +16,7 @@ from app.services.enterprise_service import (
      modify_enterprise,
      fetch_all_enterprises,
      fetch_enterprise,
+     remove_enterprise_by_id,
 )
 
 
@@ -59,7 +60,7 @@ def patch_enterprise(
     enterprise_id: str,
     modify_input: EnterpriseModifyInput,
 ):
-    """Modify  Enterprise info"""
+    """Modify Enterprise info"""
     logger.info(f"PATCH /enterprise/{enterprise_id}")
 
     enterprise = modify_enterprise(request.state.current_user.id, enterprise_id, modify_input)
@@ -136,6 +137,17 @@ def get_enterprise_by_id(
     logger.info(f"get_enterprise_by_id - GET /enterprise output: {output}")
     return output
 
+
+@router.delete("/enterprise/{enterprise_id}")
+def delete_enterprise(
+    request: Request,
+    enterprise_id: str,
+):
+    """Delete Enterprise"""
+    logger.info(f"DELETE /enterprise/{enterprise_id}")
+
+    enterprise = remove_enterprise_by_id(enterprise_id)
+    logger.info(f"delete_enterprise: {enterprise}")
 
 
 # @router.get("/", response_model=EnterpriseListOutput)

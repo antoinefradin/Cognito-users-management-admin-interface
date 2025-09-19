@@ -234,3 +234,19 @@ def is_enterprise_exists(enterprise_id: str) -> bool:
     if "Item" not in response:
         raise RecordNotFoundError(f"Enterprise {enterprise_id} not found")
     return True
+
+
+def delete_enterprise_by_id(enterprise_id: str):
+    table = _get_table_public_client()
+    logger.info(f"Deleting enterprise with id: {enterprise_id}")
+    try:
+        response = table.delete_item(
+            Key={"PK": enterprise_id, "SK": compose_enterprise_id(enterprise_id)},
+            ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
+        )
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+            raise RecordNotFoundError(f"Bot with id {enterprise_id} not found")
+        else:
+            raise e
+    return response
