@@ -98,7 +98,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
     enterprise?.contractStartDate || new Date().toISOString()
   );
   const [contractEndDate, setContractEndDate] = useState(
-    enterprise?.contractEndDate || null
+    enterprise?.contractEndDate || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
   );
 
   // ========================================================================
@@ -530,7 +530,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
 
             {/* Contract End Date */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Contract End Date</Label>
+              <Label className="text-sm font-medium text-gray-700">Contract End Date *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button 
