@@ -53,15 +53,19 @@ def create_enterprise(
 
 
 
-@router.patch("/enterprise/{enterprise_id}")
+@router.patch("/enterprise/{enterprise_id}", response_model=EnterpriseModifyOutput)
 def patch_enterprise(
     request: Request,
     enterprise_id: str,
     modify_input: EnterpriseModifyInput,
-    response_model=EnterpriseModifyOutput
 ):
     """Modify  Enterprise info"""
-    return modify_enterprise(request.state.current_user.id, enterprise_id, modify_input)
+    logger.info(f"PATCH /enterprise/{enterprise_id}")
+
+    enterprise = modify_enterprise(request.state.current_user.id, enterprise_id, modify_input)
+    logger.info(f"modify_enterprise: {enterprise}")
+
+    return enterprise
 
 
 
@@ -102,12 +106,13 @@ def get_all_enterprises(
 @router.get("/enterprise/{enterprise_id}", response_model=EnterpriseOutput)
 def get_enterprise_by_id(
     request: Request,
+    enterprise_id: str,
     check_admin_permissions=Depends(check_admin),
 ):
     """Get enterprise by id."""
     logger.info("GET /enterprise/enterprise_id")
 
-    enterprise = fetch_enterprise()
+    enterprise = fetch_enterprise(enterprise_id)
 
     output = EnterpriseOutput(
         id=enterprise.id,

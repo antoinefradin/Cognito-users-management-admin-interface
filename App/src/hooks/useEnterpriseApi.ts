@@ -9,8 +9,8 @@ import type {
   RegisterEnterpriseResponse,
   GetEnterprisesResponse,
   GetEnterpriseResponse,
-//   UpdateBotPinnedRequest,
-//   UpdateBotPinnedResponse,
+  UpdateEnterpriseRequest,
+  UpdateEnterpriseResponse,
 //   UpdateBotRequest,
 //   UpdateBotResponse,
 //   UpdateBotVisibilityRequest,
@@ -54,9 +54,9 @@ const useBotApi = () => {
     registerEnterprise: (params: RegisterEnterpriseRequest) => {
       return http.post<RegisterEnterpriseResponse>('enterprise', params);
     },
-    // updateBot: (botId: string, params: UpdateBotRequest) => {
-    //   return http.patch<UpdateBotResponse>(`bot/${botId}`, params);
-    // },
+    updateEnterprise: (enterpriseId: string, params: UpdateEnterpriseRequest) => {
+      return http.patch<UpdateEnterpriseResponse>(`enterprise/${enterpriseId}`, params);
+    },
     // updateBotPinned: (botId: string, params: UpdateBotPinnedRequest) => {
     //   return http.patch<UpdateBotPinnedResponse>(`bot/${botId}/pinned`, params);
     // },

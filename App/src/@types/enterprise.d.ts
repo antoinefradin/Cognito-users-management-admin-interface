@@ -86,6 +86,7 @@ export type RegisterEnterpriseResponse = RegisterEnterpriseRequest & {
 };
 
 export type UpdateEnterpriseRequest = {
+  name: string;
   industry?: IndustryEnum;
   size?: CompanySizeEnum;
   contactEmail: string;
@@ -117,6 +118,7 @@ export type UpdateEnterpriseResponse = {
   contractStartDate: string;
   contractEndDate?: string;
   monthlyRevenue?: number;
+  updated_date: string;
 };
 
 

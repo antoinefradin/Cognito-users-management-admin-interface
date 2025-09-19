@@ -12,8 +12,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { CalendarIcon, Save, X, Loader2 } from "lucide-react";
 import { ulid } from 'ulid';
-// import type { EnterpriseType } from "@/entities/EnterpriseSchema";
-import type { EnterpriseMeta, RegisterEnterpriseRequest, RegisterEnterpriseResponse} from '@/@types/enterprise.d';
+import type { 
+  EnterpriseDetails,
+  RegisterEnterpriseRequest,
+  RegisterEnterpriseResponse,
+  UpdateEnterpriseRequest,
+  UpdateEnterpriseResponse,
+} from '@/@types/enterprise.d';
 import { 
   IndustryEnum,
   CompanySizeEnum,
@@ -26,16 +31,13 @@ import useEnterprise from "@/hooks/useEnterpriseApi";
 // ============================================================================
 // CONSTANTS - Updated to use proper enums
 // ============================================================================
-
-// CHANGE: Replace string arrays with enum values for type safety
 const industries = Object.values(IndustryEnum);
 const sizes = Object.values(CompanySizeEnum);
 const tiers = Object.values(SubscriptionTierEnum);
 const statuses = Object.values(EnterpriseStatusEnum);
 
-
 interface EnterpriseFormProps {
-  enterprise?: EnterpriseMeta | null;
+  enterprise?: EnterpriseDetails | null;
   onCancel: () => void;
   onSuccess?: (enterprise: RegisterEnterpriseResponse) => void;
   onError?: (error: string) => void;
@@ -59,7 +61,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
   // ========================================================================
   
   const navigate = useNavigate();
-  const { registerEnterprise } = useEnterprise();
+  const { registerEnterprise, updateEnterprise } = useEnterprise();
   
   // Loading state
   const [isLoading, setIsLoading] = useState(false);
@@ -109,36 +111,30 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
       onError?.('Company name is required');
       return false;
     }
-    
     if (!contactEmail.trim()) {
       onError?.('Contact email is required');
       return false;
     }
-    
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(contactEmail)) {
       onError?.('Must be a valid email address');
       return false;
     }
-    
     // Website validation
     if (website && !website.startsWith('http://') && !website.startsWith('https://')) {
       onError?.('Website must be a valid URI starting with http:// or https://');
       return false;
     }
-    
     // License validation
     if (maxLicenses < 1) {
       onError?.('Max licenses must be at least 1');
       return false;
     }
-    
     if (usedLicenses < 0) {
       onError?.('Used licenses cannot be negative');
       return false;
     }
-    
     if (usedLicenses > maxLicenses) {
       onError?.('Used licenses cannot exceed max licenses');
       return false;
@@ -153,13 +149,11 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
         return false;
       }
     }
-    
     // Revenue validation
     if (monthlyRevenue < 0) {
       onError?.('Monthly revenue cannot be negative');
       return false;
     }
-    
     return true;
   }, [
     name,
@@ -177,35 +171,59 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
   // SUBMIT HANDLER - Following the Bot pattern
   // ========================================================================
   
-  const onClickCreate = useCallback(() => {
+  const onClickSave = useCallback(() => {
     // Validation check
     if (!isValid()) {
       return;
     }
-    
     setIsLoading(true);
 
-    // Build the request object
-    const enterpriseRequest: RegisterEnterpriseRequest = {
-      id: enterpriseId,
-      name,
-      industry: industry,
-      size: size,
-      contactEmail,
-      contactPhone: contactPhone || undefined,
-      address: address || undefined,
-      website: website || undefined,
-      status,
-      subscriptionTier,
-      maxLicenses,
-      usedLicenses,
-      contractStartDate,
-      contractEndDate: contractEndDate || undefined,
-      monthlyRevenue: monthlyRevenue || undefined,
-    };
-    
+    // Build request objects
+    let apiCall: Promise<any>;
+
+    if (mode === 'update') {
+      const enterpriseRequest: UpdateEnterpriseRequest = {
+        name: name,
+        industry: industry,
+        size: size,
+        contactEmail,
+        contactPhone: contactPhone || undefined,
+        address: address || undefined,
+        website: website || undefined,
+        status,
+        subscriptionTier,
+        maxLicenses,
+        usedLicenses,
+        contractStartDate,
+        contractEndDate: contractEndDate || undefined,
+        monthlyRevenue: monthlyRevenue || undefined,
+      };
+      apiCall = updateEnterprise(enterpriseId, enterpriseRequest);
+      console.log("Update OK");
+    } else {
+      const enterpriseRequest: RegisterEnterpriseRequest = {
+        id: enterpriseId,
+        name,
+        industry: industry,
+        size: size,
+        contactEmail,
+        contactPhone: contactPhone || undefined,
+        address: address || undefined,
+        website: website || undefined,
+        status,
+        subscriptionTier,
+        maxLicenses,
+        usedLicenses,
+        contractStartDate,
+        contractEndDate: contractEndDate || undefined,
+        monthlyRevenue: monthlyRevenue || undefined,
+      };
+      apiCall = registerEnterprise(enterpriseRequest);
+      console.log("Register OK");
+    }
+
     // API call
-    registerEnterprise(enterpriseRequest)
+    apiCall
       .then((response) => {
         // Success - navigate to enterprises list
         onSuccess?.(response.data);
@@ -215,12 +233,13 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
         // Error handling
         const errorMessage = error.response?.data?.message || 
                             error.message || 
-                            'Failed to save enterprise. Please try again.';
+                            `Failed to ${mode === 'update' ? 'update' : 'save'} enterprise. Please try again.`;
         onError?.(errorMessage);
         setIsLoading(false);
       });
   }, [
     isValid,
+    updateEnterprise,
     registerEnterprise,
     enterpriseId,
     name,
@@ -282,7 +301,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={(e) => { e.preventDefault(); onClickCreate(); }} className="space-y-6">
+        <form onSubmit={(e) => { e.preventDefault(); onClickSave(); }} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             {/* Name */}
             <div className="space-y-2">
@@ -568,7 +587,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({
             
             <Button 
               type="button"  
-              onClick={onClickCreate}
+              onClick={onClickSave}
               className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
               disabled={isLoading}
             >

@@ -34,7 +34,6 @@ class ResourceConflictError(Exception):
 
 
 def compose_enterprise_id(enterprise_id: str):
-    # Add user_id prefix for row level security to match with `LeadingKeys` condition
     return f"ENTERPRISE#{enterprise_id}"
 
 

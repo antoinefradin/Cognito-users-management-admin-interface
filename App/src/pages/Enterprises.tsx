@@ -83,10 +83,9 @@ const Enterprises: React.FC = () => {
   // Edit enterprise
   const handleEdit = async (enterprise: EnterpriseMeta): Promise<void> => {
     try {
-      // Utiliser fetchEnterprise au lieu de getEnterprise
       const enterpriseDetails = await getEnterprise(enterprise.id);
-      console.log('🏭 EnterpriseDetails from getEnterprises(): ', enterpriseDetails)
-      setEditingEnterprise(enterpriseDetails);
+      console.log('🏭 EnterpriseDetails from getEnterprises(): ', enterpriseDetails.data)
+      setEditingEnterprise(enterpriseDetails.data);
       setFormMode('update');
       setShowForm(true);
 
@@ -163,7 +162,7 @@ const Enterprises: React.FC = () => {
                 mode={formMode}
                 enterprise={editingEnterprise}
                 onSuccess={(registerEnterprise) => {
-                  console.log('✅ Enterprise saved successfully:', registerEnterprise);
+                  console.log(`✅ Enterprise ${formMode} successfully:`, registerEnterprise);
 
                   setShowForm(false);
                   //setEditingEnterprise();

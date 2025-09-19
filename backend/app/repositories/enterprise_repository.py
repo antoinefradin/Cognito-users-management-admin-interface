@@ -114,25 +114,33 @@ def update_enterprise(
 
     # PART 1: Construction of update expression
     update_expression = (
-        "SET Industry = :industry, "                # SET indicates an update/creation operation
-        "Size = :size, "                            # Each field = :placeholder
-        "Status = :status, "                        # Placeholders prevent SQL-like injection
-        "ContactEmail = :contact_email, "           # Commas separate the operations
+        "SET GSI1SK = :gsi1_sk, "
+        "Industry = :industry, "              
+        "#size = :size, "                       # ← Alias for Size (reserved keyword)
+        "#status = :status, "                   # ← Alias for Status (reserved keyword)                       
+        "ContactEmail = :contact_email, "          
         "ContactPhone = :contact_phone, " 
         "Address = :address, " 
         "Website  = :website, " 
         "SubscriptionTier = :subscription_tier, " 
         "MaxLicenses = :max_licenses, " 
         "UsedLicenses = :used_licenses, "
-        "MonthlyRevenues = :monthly_revenue, "
+        "MonthlyRevenue = :monthly_revenue, "
         "ContractStartDate = :contract_start_date, "
         "ContractEndDate = :contract_end_date, "
         "UpdatedDate = :updated_date, "
-        "UpdatedBy = :updated_by, "
+        "UpdatedBy = :updated_by"
     )
 
-    # PART 2: Values mapping with placeholders
+    # PART 2: Attribute names mapping for reserved keywords
+    expression_attribute_names = {
+        "#size": "Size",        # ← Mapping for Size reserved keyword
+        "#status": "Status"     # ← Mapping for Status reserved keyword
+}
+
+    # PART 3: Values mapping with placeholders
     expression_attribute_values = {
+        ":gsi1_sk": contract_end_date,
         ":industry": industry,                         
         ":size": size,              
         ":status": status,              
@@ -154,6 +162,7 @@ def update_enterprise(
         response = table.update_item(
             Key={"PK": enterprise_id, "SK": compose_enterprise_id(enterprise_id)},
             UpdateExpression=update_expression,
+            ExpressionAttributeNames=expression_attribute_names,  # ← Required for reserved keywords
             ExpressionAttributeValues=expression_attribute_values,
             ReturnValues="ALL_NEW",
             ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
@@ -176,15 +185,17 @@ def find_enterprise_by_id(enterprise_id: str) -> EnterpriseModel:
     table = _get_table_public_client()
     logger.info(f"Finding enterprise with id: {enterprise_id}")
 
-    existing_item = table.get_item(
+    response = table.get_item(
         Key={
-            "PK": f"{enterprise_id}",
-            "SK": "ENTERPRISE#{enterprise_id}"
+            "PK": enterprise_id,
+            "SK": f"ENTERPRISE#{enterprise_id}"
         }
     )
-    if len(existing_item["Items"]) == 0:
+    logger.info(f"Finding enterprise with id - existing_item: {response}")
+    if "Item" not in response or len(response["Item"]) == 0:
         raise RecordNotFoundError(f"Enterprise {enterprise_id} not found")
     
+    existing_item = response["Item"]
     return EnterpriseModel(
         id=existing_item["PK"],
         name=existing_item["Name"],
@@ -214,12 +225,12 @@ def is_enterprise_exists(enterprise_id: str) -> bool:
     table = _get_table_public_client()
     logger.info(f"Check if enterprise with id exists: {enterprise_id}")
 
-    existing_item = table.get_item(
+    response = table.get_item(
         Key={
-            "PK": f"{enterprise_id}",
-            "SK": "ENTERPRISE#{enterprise_id}"
+            "PK": enterprise_id,
+            "SK": f"ENTERPRISE#{enterprise_id}"
         }
     )
-    if len(existing_item["Items"]) == 0:
+    if "Item" not in response:
         raise RecordNotFoundError(f"Enterprise {enterprise_id} not found")
     return True
