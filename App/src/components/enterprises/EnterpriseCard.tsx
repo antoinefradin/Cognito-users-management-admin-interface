@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, Users, Calendar, Globe, Edit, MoreVertical } from "lucide-react";
+import { Building2, Users, Calendar, Globe, Edit, MoreVertical, OctagonX} from "lucide-react";
 import { format } from "date-fns";
 import {
   DropdownMenu,
@@ -82,21 +82,21 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({
           {/* Card Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button variant="ghost" size="icon" className="transition-opacity  hover:bg-gray-100">
                 <MoreVertical className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(enterprise)}>
-                <Edit className="w-4 h-4 mr-2" />
+              <DropdownMenuItem onClick={() => onEdit(enterprise)} className="hover:bg-gray-100">
+                <Edit className="w-4 h-4 mr-1" />
                 Edit Enterprise
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onViewLicenses(enterprise)}>
-                <Users className="w-4 h-4 mr-2" />
+              <DropdownMenuItem onClick={() => onViewLicenses(enterprise)} className="hover:bg-gray-100">
+                <Users className="w-4 h-4 mr-1" />
                 View Licenses
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(enterprise)}>
-                <Edit className="w-4 h-4 mr-2" />
+              <DropdownMenuItem onClick={() => onDelete(enterprise)} className="text-red-400 hover:bg-red-100">
+                <OctagonX className="w-4 h-4 mr-1" />
                 Delete Enterprise
               </DropdownMenuItem>
             </DropdownMenuContent>
