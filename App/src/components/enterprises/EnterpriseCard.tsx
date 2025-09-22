@@ -87,16 +87,16 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(enterprise)} className="hover:bg-gray-100">
+              <DropdownMenuItem onClick={() => onEdit(enterprise)} className="!hover:bg-gray-100 data-[highlighted]:bg-gray-100">
                 <Edit className="w-4 h-4 mr-1" />
                 Edit Enterprise
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onViewLicenses(enterprise)} className="hover:bg-gray-100">
+              <DropdownMenuItem onClick={() => onViewLicenses(enterprise)} className="!hover:bg-gray-100 data-[highlighted]:bg-gray-100">
                 <Users className="w-4 h-4 mr-1" />
                 View Licenses
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(enterprise)} className="text-red-400 hover:bg-red-100">
-                <OctagonX className="w-4 h-4 mr-1" />
+              <DropdownMenuItem onClick={() => onDelete(enterprise)} className="text-red-400 !hover:bg-red-100 data-[highlighted]:bg-red-100 data-[highlighted]:text-red-400">
+                <OctagonX className="w-4 h-4 mr-1 text-red-400" />
                 Delete Enterprise
               </DropdownMenuItem>
             </DropdownMenuContent>
