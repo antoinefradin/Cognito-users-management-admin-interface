@@ -37,6 +37,8 @@ const Enterprises: React.FC = () => {
   const [enterprises, setEnterprises] = useState<EnterpriseMeta[]>([]);
   //const [licenses, setLicenses] = useState<LicenseType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -82,6 +84,9 @@ const Enterprises: React.FC = () => {
   
   // Edit enterprise
   const handleEdit = async (enterprise: EnterpriseMeta): Promise<void> => {
+    if (isEditLoading) return; // Prevent multiple clicks
+  
+    setIsEditLoading(true);
     try {
       const enterpriseDetails = await getEnterprise(enterprise.id);
       console.log('🏭 EnterpriseDetails from getEnterprises(): ', enterpriseDetails.data)
@@ -91,6 +96,8 @@ const Enterprises: React.FC = () => {
 
     } catch (error) {
         console.error('❌ Error from getEnterprises() retrieval: ', error);
+    } finally {
+      setIsEditLoading(false);
     }
   };
 
@@ -102,12 +109,16 @@ const Enterprises: React.FC = () => {
 
   // Delete enterprise
   const handleDelete = async (enterprise: EnterpriseMeta): Promise<void> => {
+    if (isDeleteLoading) return; 
+    setIsDeleteLoading(true);
     try {
       console.log('🏭 Deleting Enterprise ...: ');
       const enterpriseDetails = await deleteEnterprise(enterprise.id);
       console.log('🏭 Enterprise deleted: ', enterpriseDetails);
     } catch (error) {
         console.error('❌ Error from getEnterprises() retrieval: ', error);
+    } finally {
+      setIsDeleteLoading(false);
     }
   };
 
@@ -248,6 +259,8 @@ const Enterprises: React.FC = () => {
                       onEdit={handleEdit}
                       onViewLicenses={handleViewLicenses}
                       onDelete={handleDelete}
+                      isEditLoading={isEditLoading}
+                      isDeleteLoading={isDeleteLoading}
                     />
                   </motion.div>
                 ))}

@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, {useState,} from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, Users, Calendar, Globe, Edit, MoreVertical, OctagonX} from "lucide-react";
+import { Building2, Users, Calendar, Globe, Edit, MoreVertical, OctagonX, Loader2} from "lucide-react";
 import { format } from "date-fns";
 import {
   DropdownMenu,
@@ -22,14 +22,24 @@ interface EnterpriseCardProps {
   onEdit: (enterprise: EnterpriseMeta) => void;
   onViewLicenses: (enterprise: EnterpriseMeta) => void;
   onDelete: (enterprise: EnterpriseMeta) => void;
+  isEditLoading?: boolean; 
+  isDeleteLoading?: boolean; 
+  isViewLicensesLoading?: boolean; 
 }
 
 const EnterpriseCard: React.FC<EnterpriseCardProps> = ({
   enterprise,
   onEdit,
   onViewLicenses,
-  onDelete 
+  onDelete,
+  isEditLoading = false,
+  isDeleteLoading = false,
+  isViewLicensesLoading = false,
+
 }: EnterpriseCardProps) => {
+
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const getStatusColor = (status: string): string => {
     switch (status) {
@@ -58,7 +68,7 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({
   };
 
   const licenseUsagePercentage: number = (enterprise.usedLicenses / enterprise.maxLicenses) * 100;
-
+  const isAnyActionLoading = isEditLoading || isDeleteLoading || isViewLicensesLoading;
 
   // ========================================================================
   // RENDER
@@ -80,23 +90,50 @@ const EnterpriseCard: React.FC<EnterpriseCardProps> = ({
             </div>
           </div>
           {/* Card Menu */}
-          <DropdownMenu>
+          <DropdownMenu
+            open={isDropdownOpen} 
+            onOpenChange={(open) => {
+              if (!open && (isEditLoading || isDeleteLoading || isViewLicensesLoading)) return;
+                setIsDropdownOpen(open);
+            }}
+          >
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="transition-opacity  hover:bg-gray-100">
                 <MoreVertical className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(enterprise)} className="!hover:bg-gray-100 data-[highlighted]:bg-gray-100">
-                <Edit className="w-4 h-4 mr-1" />
+              <DropdownMenuItem 
+                onClick={() => onEdit(enterprise)}
+                disabled={isAnyActionLoading}
+                className="!hover:bg-gray-100 data-[highlighted]:bg-gray-100">
+                {isEditLoading ? (
+                  <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                ) : (
+                  <Edit className="w-4 h-4 mr-1" />
+                )}
                 Edit Enterprise
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onViewLicenses(enterprise)} className="!hover:bg-gray-100 data-[highlighted]:bg-gray-100">
-                <Users className="w-4 h-4 mr-1" />
+              <DropdownMenuItem 
+                onClick={() => onViewLicenses(enterprise)}
+                disabled={isAnyActionLoading}
+                className="!hover:bg-gray-100 data-[highlighted]:bg-gray-100">
+                {isViewLicensesLoading ? (
+                  <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                ) : (
+                  <Users className="w-4 h-4 mr-1" />
+                )}
                 View Licenses
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(enterprise)} className="text-red-400 !hover:bg-red-100 data-[highlighted]:bg-red-100 data-[highlighted]:text-red-400">
-                <OctagonX className="w-4 h-4 mr-1 text-red-400" />
+              <DropdownMenuItem
+                onClick={() => onDelete(enterprise)}
+                disabled={isAnyActionLoading}
+                className="text-red-400 !hover:bg-red-100 data-[highlighted]:bg-red-100 data-[highlighted]:text-red-400">
+                {isDeleteLoading ? (
+                  <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                ) : (
+                  <OctagonX className="w-4 h-4 mr-1 text-red-400" />
+                )}
                 Delete Enterprise
               </DropdownMenuItem>
             </DropdownMenuContent>
