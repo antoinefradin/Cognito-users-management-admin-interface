@@ -57,24 +57,43 @@ const Enterprises: React.FC = () => {
     isValidating: boolean,                      // Validation state
     // ... other SWR properties
   }*/
-  const { data: enterprisesResponse } = getEnterprises();
+  // Extract mutate function for data revalidation
+  const { data: enterprisesResponse, mutate: refreshEnterprises, isLoading: swrLoading } = getEnterprises();
 
-  useEffect(() => {
-    if (enterprisesResponse && !hasProcessed) {
+
+  // useEffect(() => {
+  //   if (enterprisesResponse && !hasProcessed) {
+  //     try {
+  //       console.log('🏭 Données entreprises reçues:', enterprisesResponse);
+        
+  //       setEnterprises(enterprisesResponse);
+        
+  //       setHasProcessed(true);
+  //       setIsLoading(false);
+  //     } catch (error) {
+  //       console.error('❌ Error from getEnterprises(): ', error as Error);
+  //       setHasProcessed(true);
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // }, [enterprisesResponse, hasProcessed]);
+
+    useEffect(() => {
+    if (enterprisesResponse) {
       try {
         console.log('🏭 Données entreprises reçues:', enterprisesResponse);
-        
         setEnterprises(enterprisesResponse);
-        
-        setHasProcessed(true);
         setIsLoading(false);
       } catch (error) {
         console.error('❌ Error from getEnterprises(): ', error as Error);
-        setHasProcessed(true);
         setIsLoading(false);
       }
     }
-  }, [enterprisesResponse, hasProcessed]);
+    // MODIFICATION: Synchronisation avec l'état de chargement SWR
+    if (swrLoading !== undefined) {
+      setIsLoading(swrLoading);
+    }
+  }, [enterprisesResponse, swrLoading]);
 
 
 
@@ -82,6 +101,23 @@ const Enterprises: React.FC = () => {
   // HANDLERS
   // ========================================================================
   
+  // Refresh 
+  const handleRefreshEnterprises = async (): Promise<void> => {
+    try {
+      console.log('🔄 Refreshing enterprise data...');
+      
+      // Reset flag to allow reprocessing of new data
+      //setHasProcessed(false);
+      
+      // Trigger SWR revalidation to fetch fresh data
+      await refreshEnterprises();
+      
+      console.log('✅ Enterprise data refreshed successfully');
+    } catch (error) {
+      console.error('❌ Error refreshing enterprises:', error);
+    }
+  };
+
   // Edit enterprise
   const handleEdit = async (enterprise: EnterpriseMeta): Promise<void> => {
     if (isEditLoading) return; // Prevent multiple clicks
@@ -93,6 +129,8 @@ const Enterprises: React.FC = () => {
       setEditingEnterprise(enterpriseDetails.data);
       setFormMode('update');
       setShowForm(true);
+
+      //await handleRefreshEnterprises();
 
     } catch (error) {
         console.error('❌ Error from getEnterprises() retrieval: ', error);
@@ -115,6 +153,10 @@ const Enterprises: React.FC = () => {
       console.log('🏭 Deleting Enterprise ...: ');
       const enterpriseDetails = await deleteEnterprise(enterprise.id);
       console.log('🏭 Enterprise deleted: ', enterpriseDetails);
+
+      // Refresh enterprise list after successful deletion
+      await handleRefreshEnterprises();
+
     } catch (error) {
         console.error('❌ Error from getEnterprises() retrieval: ', error);
     } finally {
@@ -163,6 +205,7 @@ const Enterprises: React.FC = () => {
           </div>
           <Button 
             onClick={() => setShowForm(true)}
+            disabled={showForm}
             className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -181,15 +224,17 @@ const Enterprises: React.FC = () => {
               <EnterpriseForm
                 mode={formMode}
                 enterprise={editingEnterprise}
-                onSuccess={(registerEnterprise) => {
-                  console.log(`✅ Enterprise ${formMode} successfully:`, registerEnterprise);
-
-                  setShowForm(false);
-                  setEditingEnterprise(undefined);
-                  setFormMode('create');
-
-                  // Optional : refresh the enterpries list
-                  //refreshEnterprises?.();
+                onSuccess={async(registerEnterprise) => {
+                  try {
+                    console.log(`✅ Enterprise ${formMode} successfully:`, registerEnterprise);
+                    setEditingEnterprise(undefined);
+                    setFormMode('create');
+                    console.log('🔄 Refreshing enterprise list after successful operation...');
+                    await handleRefreshEnterprises();
+                    setShowForm(false);
+                  } catch (error) {
+                    console.error('❌ Error during post-success operations:', error);
+                  }
                 }}
                 onError={(error) => {
                   console.error('❌ Enterprise save failed:', error);
