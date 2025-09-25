@@ -11,6 +11,11 @@ REGION = os.environ.get("REGION", "eu-west-3")
 TABLE_ACCESS_ROLE_ARN = os.environ.get("TABLE_ACCESS_ROLE_ARN", "")
 # TRANSACTION_BATCH_SIZE = 25
 
+# Events
+ADMIN_TABLE_NAME = os.environ.get("ADMIN_TABLE_NAME", "")
+EVENTS_TABLE_NAME = os.environ.get("EVENTS_TABLE_NAME", "")
+
+
 
 class RecordNotFoundError(Exception):
     pass
@@ -121,8 +126,14 @@ def _get_aws_resource(service_name, user_id=None):
 #     return _get_aws_resource("dynamodb", user_id=user_id).Table(TABLE_NAME)
 
 
-def _get_table_public_client():
+def _get_table_admin_client():
     """Get a DynamoDB table client.
     Warning: No row-level access. Use for only limited use case.
     """
     return _get_aws_resource("dynamodb").Table(TABLE_NAME)
+
+def _get_table_event_client():
+    """Get a DynamoDB table client.
+    Warning: No row-level access. Use for only limited use case.
+    """
+    return boto3.resource("dynamodb").Table(EVENTS_TABLE_NAME)

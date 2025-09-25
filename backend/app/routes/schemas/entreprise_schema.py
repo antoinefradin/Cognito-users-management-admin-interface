@@ -1,12 +1,10 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Literal, Optional
-
+from pydantic import Field, root_validator, validator, EmailStr
+from enum import Enum
 from app.routes.schemas.base import BaseSchema
 
-from pydantic import Field, root_validator, validator, EmailStr
 
-from enum import Enum
 
 class IndustryEnum(str, Enum):
     TECHNOLOGY = "technology"

@@ -13,7 +13,7 @@ from botocore.exceptions import ClientError
 
 from app.repositories.common import (
     RecordNotFoundError,
-    _get_table_public_client,
+    _get_table_admin_client,
     compose_enterprise_id,
 
 )
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_enterprises_by_contract_end_date(limit: int = 20, ascending: bool = True):
-    table = _get_table_public_client()
+    table = _get_table_admin_client()
     logger.info(f"Get enterprises sorted by contract_end_date")
 
     # Fetch all bots
@@ -52,7 +52,7 @@ def get_enterprises_by_contract_end_date(limit: int = 20, ascending: bool = True
 
 
 def store_enterprise(user_id: str, custom_enterprise: EnterpriseModel):
-    table = _get_table_public_client()
+    table = _get_table_admin_client()
     logger.info(f"store_enterprise() function")
     logger.info(f"Storing enterprise: {custom_enterprise}")
 
@@ -109,7 +109,7 @@ def update_enterprise(
     Returns:
         DynamoDB response from update_item
     """
-    table = _get_table_public_client()
+    table = _get_table_admin_client()
     logger.info(f"Updating bot: {enterprise_id}")
 
     # PART 1: Construction of update expression
@@ -182,7 +182,7 @@ def update_enterprise(
 
 def find_enterprise_by_id(enterprise_id: str) -> EnterpriseModel:
     """Find enterprise."""
-    table = _get_table_public_client()
+    table = _get_table_admin_client()
     logger.info(f"Finding enterprise with id: {enterprise_id}")
 
     response = table.get_item(
@@ -222,7 +222,7 @@ def find_enterprise_by_id(enterprise_id: str) -> EnterpriseModel:
 
 def is_enterprise_exists(enterprise_id: str) -> bool:
     """Find enterprise."""
-    table = _get_table_public_client()
+    table = _get_table_admin_client()
     logger.info(f"Check if enterprise with id exists: {enterprise_id}")
 
     response = table.get_item(
@@ -237,7 +237,7 @@ def is_enterprise_exists(enterprise_id: str) -> bool:
 
 
 def delete_enterprise_by_id(enterprise_id: str):
-    table = _get_table_public_client()
+    table = _get_table_admin_client()
     logger.info(f"Deleting enterprise with id: {enterprise_id}")
     try:
         response = table.delete_item(
