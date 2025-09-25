@@ -4,8 +4,8 @@ import os
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-from app.repositories.event_repository import store_event
-from app.repositories.models.event_model import EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum
+from repositories.event_repository import store_event
+from repositories.models.event_model import EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum
 
 
 ADMIN_TABLE_NAME = os.environ.get("ADMIN_TABLE_NAME", "")

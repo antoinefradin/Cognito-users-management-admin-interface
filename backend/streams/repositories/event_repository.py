@@ -11,17 +11,13 @@ from typing import Optional, Dict, Any
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
-from app.repositories.common import (
+from streams.repositories.common import (
     RecordNotFoundError,
     _get_table_event_client,
     compose_enterprise_id,
 )
-from app.routes.schemas.event_schema import (
-    EventNameEnum,
-    EventTypeEnum,
 
-)
-from app.repositories.models.event_model import (
+from streams.repositories.models.event_model import (
     EventModel,
 )
 
