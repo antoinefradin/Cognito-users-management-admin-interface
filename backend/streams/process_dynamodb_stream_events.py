@@ -1,12 +1,11 @@
 import logging
 import os
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
 from repositories.event_repository import store_event
 from repositories.models.event_model import EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 ADMIN_TABLE_NAME = os.environ.get("ADMIN_TABLE_NAME", "")
 EVENTS_TABLE_NAME = os.environ.get("EVENTS_TABLE_NAME", "")
