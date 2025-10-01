@@ -14,7 +14,7 @@ from botocore.exceptions import ClientError
 from repositories.common import (
     RecordNotFoundError,
     _get_table_event_client,
-    compose_enterprise_id,
+    compose_event_id,
 )
 
 from repositories.models.event_model import (
@@ -49,6 +49,7 @@ def store_event(custom_event: EventModel):
     table = _get_table_event_client()
     logger.info(f"store_event() function")
     logger.info(f"Storing event: {custom_event}")
+    logger.info(f"Storing event: {table}")
 
     item = {
         "PK": "EVENTS",

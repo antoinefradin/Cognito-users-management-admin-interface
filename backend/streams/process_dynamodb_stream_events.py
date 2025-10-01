@@ -1,5 +1,7 @@
 import logging
 import os
+from uuid import uuid4
+from typing import Dict, Any, Optional
 
 from repositories.event_repository import store_event
 from repositories.models.event_model import EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum
@@ -25,20 +27,39 @@ def handler(event, context):
     processed_count = 0
     failed_records = []
     
-#     for record in event['Records']:
-#         try:
-#             # Process only INSERT and REMOVE events
-#             if record['eventName'] in ['INSERT', 'REMOVE']:
-#                 create_event_record(record)
-#                 processed_count += 1
-#             else:
-#                 print(f"Skipping {record['eventName']} event")
+    for record in event['Records']:
+        try:
+            dynamodb_data = record.get('dynamodb', {})
+            event_name = record['eventName']
+            # Get entity data (new for INSERT, OLD for REMOVE)
+            entity_data = dynamodb_data.get('NewImage') if event_name == 'INSERT' else dynamodb_data.get('OldImage')
+
+            # Create event model
+            event_model = EventModel(
+                id=str(uuid4),
+                event_date=dynamodb_data.get('ApproximateCreationDateTime'),
+                event_name=EventNameEnum(record['eventName']),
+                event_type=EventTypeEnum(record['eventType']),
+                event_source=record['eventSource'],
+                event_source_arn=record['eventSourceARN'],
+                entity_type=dynamodb_data.get('ApproximateCreationDateTime'),
+                entity_id=extract_string_value(entity_data,"PK"),
+                user_id=extract_string_value(entity_data,"PK"),
+                details=dynamodb_data,
+            )
+
+            # # Process only INSERT and REMOVE events
+            # if record['eventName'] in ['INSERT', 'REMOVE']:
+            #     create_event_record(record)
+            #     processed_count += 1
+            # else:
+            #     print(f"Skipping {record['eventName']} event")
                 
-#         except Exception as e:
-#             print(f"Error processing record {record.get('eventID', 'unknown')}: {str(e)}")
-#             failed_records.append({
-#                 'itemIdentifier': record.get('eventID', 'unknown')
-#             })
+        except Exception as e:
+            print(f"Error processing record {record.get('eventID', 'unknown')}: {str(e)}")
+            failed_records.append({
+                'itemIdentifier': record.get('eventID', 'unknown')
+            })
     
 #     print(f"Successfully processed {processed_count} records")
     
@@ -124,32 +145,32 @@ def handler(event, context):
 #     else:
 #         return 'UNKNOWN'
 
-# def extract_string_value(entity_data: Dict[str, Any], field_name: str) -> Optional[str]:
-#     """
-#     Extract string value from DynamoDB attribute format
-#     DynamoDB streams return data in format: {'S': 'string_value'} or {'N': 'number_value'}
-#     """
-#     field_data = entity_data.get(field_name)
-#     if not field_data:
-#         return None
+def extract_string_value(entity_data: Dict[str, Any], field_name: str) -> Optional[str]:
+    """
+    Extract string value from DynamoDB attribute format
+    DynamoDB streams return data in format: {'S': 'string_value'} or {'N': 'number_value'}
+    """
+    field_data = entity_data.get(field_name)
+    if not field_data:
+        return None
     
-#     # Handle DynamoDB attribute format
-#     if isinstance(field_data, dict):
-#         # String attribute
-#         if 'S' in field_data:
-#             return field_data['S']
-#         # Number attribute (convert to string)
-#         elif 'N' in field_data:
-#             return field_data['N']
-#         # Boolean attribute
-#         elif 'BOOL' in field_data:
-#             return str(field_data['BOOL'])
+    # Handle DynamoDB attribute format
+    if isinstance(field_data, dict):
+        # String attribute
+        if 'S' in field_data:
+            return field_data['S']
+        # Number attribute (convert to string)
+        elif 'N' in field_data:
+            return field_data['N']
+        # Boolean attribute
+        elif 'BOOL' in field_data:
+            return str(field_data['BOOL'])
     
-#     # Handle direct string (shouldn't happen in streams but just in case)
-#     elif isinstance(field_data, str):
-#         return field_data
+    # Handle direct string
+    elif isinstance(field_data, str):
+        return field_data
     
-#     return None
+    return None
 
 # def extract_number_value(entity_data: Dict[str, Any], field_name: str) -> Optional[int]:
 #     """
