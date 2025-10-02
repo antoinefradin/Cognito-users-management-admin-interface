@@ -26,6 +26,11 @@ from app.repositories.common import (
 from app.utils import (
     get_current_time,
 )
+from event_service import create_new_event
+from app.repositories.models.event_model import (
+    EventModel, EventNameEnum, EventTypeEnum,EntityTypeEnum
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +62,17 @@ def create_new_enterprise(user_id: str, enterprise_input: EnterpriseInput) -> En
             created_by=user_id
         ),
     )
+
+    # Enterprise INSERT event
+    create_new_event(
+        user_id=user_id,
+        event_date=current_time,
+        event_name=EventNameEnum.INSERT,
+        event_type=EventTypeEnum.ENTERPRISE_CREATED,
+        entity_id=enterprise_input.id,
+        entity_type=EntityTypeEnum.ENTERPRISE,
+    )
+
     return EnterpriseOutput(
         id=enterprise_input.id,
         name=enterprise_input.name,

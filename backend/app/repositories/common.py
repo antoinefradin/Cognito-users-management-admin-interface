@@ -9,6 +9,10 @@ ACCOUNT = os.environ.get("ACCOUNT", "")
 REGION = os.environ.get("REGION", "eu-west-3")
 TABLE_ACCESS_ROLE_ARN = os.environ.get("TABLE_ACCESS_ROLE_ARN", "")
 # TRANSACTION_BATCH_SIZE = 25
+# Events
+ADMIN_TABLE_NAME = os.environ.get("ADMIN_TABLE_NAME", "")
+EVENTS_TABLE_NAME = os.environ.get("EVENTS_TABLE_NAME", "")
+
 
 
 class RecordNotFoundError(Exception):
@@ -23,14 +27,6 @@ class ResourceConflictError(Exception):
     pass
 
 
-# def compose_conv_id(user_id: str, conversation_id: str):
-#     # Add user_id prefix for row level security to match with `LeadingKeys` condition
-#     return f"{user_id}#CONV#{conversation_id}"
-
-
-# def decompose_conv_id(conv_id: str):
-#     return conv_id.split("#")[-1]
-
 
 def compose_enterprise_id(enterprise_id: str):
     return f"ENTERPRISE#{enterprise_id}"
@@ -40,13 +36,13 @@ def decompose_enterprise_id(composed_enterprise_id: str):
     return composed_enterprise_id.split("#")[-1]
 
 
-# def compose_bot_alias_id(user_id: str, alias_id: str):
-#     # Add user_id prefix for row level security to match with `LeadingKeys` condition
-#     return f"{user_id}#BOT_ALIAS#{alias_id}"
+def compose_event_id(event_id: str):
+    return f"EVENT#{event_id}"
 
 
-# def decompose_bot_alias_id(composed_alias_id: str):
-#     return composed_alias_id.split("#")[-1]
+def decompose_event_id(composed_event_id: str):
+    return composed_event_id.split("#")[-1]
+
 
 
 def _get_aws_resource(service_name, user_id=None):
@@ -110,18 +106,14 @@ def _get_aws_resource(service_name, user_id=None):
     return session.resource(service_name, region_name=REGION)
 
 
-# def _get_dynamodb_client(user_id=None):
-#     """Get a DynamoDB client, optionally with row-level access control."""
-#     return _get_aws_resource("dynamodb", user_id=user_id).meta.client
-
-
-# def _get_table_client(user_id):
-#     """Get a DynamoDB table client with row-level access."""
-#     return _get_aws_resource("dynamodb", user_id=user_id).Table(TABLE_NAME)
-
 
 def _get_table_admin_client():
     """Get a DynamoDB table client.
     Warning: No row-level access. Use for only limited use case.
     """
     return _get_aws_resource("dynamodb").Table(TABLE_NAME)
+
+
+def _get_table_event_client():
+    """Get a DynamoDB table client."""
+    return boto3.resource("dynamodb").Table(EVENTS_TABLE_NAME)

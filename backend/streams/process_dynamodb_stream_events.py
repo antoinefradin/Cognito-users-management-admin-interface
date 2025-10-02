@@ -3,8 +3,8 @@ import os
 from uuid import uuid4
 from typing import Dict, Any, Optional
 
-from repositories.event_repository import store_event
-from repositories.models.event_model import EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum
+#from backend.app.repositories.event_repository import store_event
+#from backend.app.repositories.models.event_model import EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -32,21 +32,21 @@ def handler(event, context):
             dynamodb_data = record.get('dynamodb', {})
             event_name = record['eventName']
             # Get entity data (new for INSERT, OLD for REMOVE)
-            entity_data = dynamodb_data.get('NewImage') if event_name == 'INSERT' else dynamodb_data.get('OldImage')
+            entity_data = dynamodb_data.get('NewImage') if event_name == 'INSERT' or event_name == 'MODIFY' else dynamodb_data.get('OldImage')
 
             # Create event model
-            event_model = EventModel(
-                id=str(uuid4),
-                event_date=dynamodb_data.get('ApproximateCreationDateTime'),
-                event_name=EventNameEnum(record['eventName']),
-                event_type=EventTypeEnum(record['eventType']),
-                event_source=record['eventSource'],
-                event_source_arn=record['eventSourceARN'],
-                entity_type=dynamodb_data.get('ApproximateCreationDateTime'),
-                entity_id=extract_string_value(entity_data,"PK"),
-                user_id=extract_string_value(entity_data,"PK"),
-                details=dynamodb_data,
-            )
+            # event_model = EventModel(
+            #     id=str(uuid4),
+            #     event_date=dynamodb_data.get('ApproximateCreationDateTime'),
+            #     event_name=EventNameEnum(record['eventName']),
+            #     event_type=EventTypeEnum(record['eventType']),
+            #     event_source=record['eventSource'],
+            #     event_source_arn=record['eventSourceARN'],
+            #     entity_type=get_entity_type(dynamodb_data),
+            #     entity_id=extract_string_value(entity_data,"PK"),
+            #     user_id=,
+            #     details=dynamodb_data,
+            # )
 
             # # Process only INSERT and REMOVE events
             # if record['eventName'] in ['INSERT', 'REMOVE']:
@@ -124,26 +124,33 @@ def handler(event, context):
 #         print(f"Failed to insert event record: {str(e)}")
 #         raise
 
-# def determine_entity_type(entity_data: Dict[str, Any]) -> str:
-#     """
-#     Determine entity type based on data structure
-#     Customize this logic based on your actual data structure
-#     """
-#     # Check for enterprise-specific fields
-#     if any(field in entity_data for field in ['enterprise_id', 'company_name', 'company_type']):
-#         return 'ENTERPRISE'
+def get_entity_type(dynamodb_data: Dict[str, Any]) -> str:
+    """
+    Get the entity type (ENTERPRISE or LICENSE) in the SK field from a DynamoDB stream event record
+    Args:
+        record: DynamoDB stream event record
+        
+    Returns:
+        type: ENTERPRISE or LICENSE, UNKNOWN otherwise
+    """
+    try:
+        # Extract the Keys section from the DynamoDB record
+        keys = dynamodb_data.get('Keys', {})
+        
+        # Extract SK value using the provided function
+        sk_value = extract_string_value(keys, 'SK')
+        
+        if not sk_value:
+            return False
+            
+        # Check if ENTERPRISE or LICENSE is in the SK value
+        return 'ENTERPRISE' in sk_value or 'LICENSE' in sk_value
+        
+    except (KeyError, TypeError, AttributeError) as e:
+        # Log the error if needed
+        print(f"Error processing DynamoDB record: {e}")
+        return 'UNKNOWN'
     
-#     # Check for license-specific fields
-#     elif any(field in entity_data for field in ['license_number', 'license_type', 'license_status']):
-#         return 'LICENSE'
-    
-#     # Check for user-specific fields
-#     elif any(field in entity_data for field in ['email', 'username', 'user_role']):
-#         return 'USER'
-    
-#     # Default fallback
-#     else:
-#         return 'UNKNOWN'
 
 def extract_string_value(entity_data: Dict[str, Any], field_name: str) -> Optional[str]:
     """

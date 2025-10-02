@@ -14,6 +14,7 @@ from botocore.exceptions import ClientError
 from app.repositories.common import (
     RecordNotFoundError,
     _get_table_admin_client,
+    _get_table_event_client,
     compose_enterprise_id,
 
 )
@@ -26,6 +27,8 @@ from app.routes.schemas.entreprise_schema import (
 from app.repositories.models.enterprise_model import (
     EnterpriseModel,
 )
+
+
 
 logger = logging.getLogger(__name__)
 

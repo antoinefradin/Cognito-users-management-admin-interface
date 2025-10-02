@@ -19,7 +19,7 @@ class ResourceConflictError(Exception):
 
 
 def compose_event_id(event_id: str):
-    return f"ENTERPRISE#{event_id}"
+    return f"EVENT#{event_id}"
 
 
 def decompose_event_id(composed_event_id: str):

@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 from enum import Enum
 
 class EventNameEnum(str, Enum):
@@ -15,20 +16,20 @@ class EventTypeEnum(str, Enum):
     LICENSE_UPDATED = "ENTERPRISE_UPDATED"
 
 class EntityTypeEnum(str, Enum):
-    ENTERPRISE = "Enterprise"
-    LICENSE = "License"
+    ENTERPRISE = "ENTERPRISE"
+    LICENSE = "LICENSE"
 
 class EventModel(BaseModel):
     id: str = Field(..., description="Company id"),
     event_date: str = Field(..., description="Creation date (YYYY-MM-DD)"),
     event_name: EventNameEnum = Field(..., description="Event name"), 
     event_type: EventTypeEnum = Field(..., description="Event type"), 
-    event_source: str = Field(..., description="Event source"),
-    event_source_arn: str = Field(..., description="Event source ARN"),
+    event_source: Optional[str] = Field(None, description="Event source"),
+    event_source_arn: Optional[str] = Field(None, description="Event source ARN"),
     entity_type: EntityTypeEnum = Field(..., description="Entity id"),
     entity_id: str = Field(..., description="Entity id"),
     user_id: str = Field(..., description="Cognito User id"),
-    details: dict = Field(..., description="Event details"),
+    details: Optional[dict] = Field(None, description="Event details"),
 
 
 

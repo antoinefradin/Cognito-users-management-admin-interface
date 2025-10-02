@@ -17,7 +17,7 @@ from repositories.common import (
     compose_event_id,
 )
 
-from repositories.models.event_model import (
+from app.repositories.models.event_model import (
     EventModel,
 )
 
