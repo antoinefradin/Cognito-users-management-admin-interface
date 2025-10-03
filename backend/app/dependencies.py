@@ -43,5 +43,12 @@ def check_creating_license_enterprise_allowed(user: User = Depends(get_current_u
     if not user.is_creating_licenses_and_enterprise_allowed():
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User is not allowed to create new Enterprise or License.",
+            detail="User is not allowed to create a new Enterprise or License.",
+        )
+    
+def check_deleting_license_enterprise_allowed(user: User = Depends(get_current_user)):
+    if not user.is_deleting_licenses_and_enterprise_allowed():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User is not allowed to delete an existing Enterprise or License.",
         )

@@ -3,16 +3,13 @@ import os
 import boto3
 
 
-DDB_ENDPOINT_URL = os.environ.get("DDB_ENDPOINT_URL")
-TABLE_NAME = os.environ.get("TABLE_NAME", "")
 ACCOUNT = os.environ.get("ACCOUNT", "")
 REGION = os.environ.get("REGION", "eu-west-3")
-TABLE_ACCESS_ROLE_ARN = os.environ.get("TABLE_ACCESS_ROLE_ARN", "")
-# TRANSACTION_BATCH_SIZE = 25
-# Events
+DDB_ENDPOINT_URL = os.environ.get("DDB_ENDPOINT_URL")
 ADMIN_TABLE_NAME = os.environ.get("ADMIN_TABLE_NAME", "")
 EVENTS_TABLE_NAME = os.environ.get("EVENTS_TABLE_NAME", "")
-
+ADMIN_TABLE_ACCESS_ROLE_ARN = os.environ.get("ADMIN_TABLE_ACCESS_ROLE_ARN", "")
+# TRANSACTION_BATCH_SIZE = 25
 
 
 class RecordNotFoundError(Exception):
@@ -79,8 +76,8 @@ def _get_aws_resource(service_name, user_id=None):
                     "dynamodb:UpdateItem",
                 ],
                 "Resource": [
-                    f"arn:aws:dynamodb:{REGION}:{ACCOUNT}:table/{TABLE_NAME}",
-                    f"arn:aws:dynamodb:{REGION}:{ACCOUNT}:table/{TABLE_NAME}/index/*",
+                    f"arn:aws:dynamodb:{REGION}:{ACCOUNT}:table/{ADMIN_TABLE_NAME}",
+                    f"arn:aws:dynamodb:{REGION}:{ACCOUNT}:table/{ADMIN_TABLE_NAME}/index/*",
                 ],
             }
         ]
@@ -93,7 +90,7 @@ def _get_aws_resource(service_name, user_id=None):
 
     sts_client = boto3.client("sts")
     assumed_role_object = sts_client.assume_role(
-        RoleArn=TABLE_ACCESS_ROLE_ARN,
+        RoleArn=ADMIN_TABLE_ACCESS_ROLE_ARN,
         RoleSessionName="DynamoDBSession",
         Policy=json.dumps(policy_document),
     )
@@ -111,7 +108,7 @@ def _get_table_admin_client():
     """Get a DynamoDB table client.
     Warning: No row-level access. Use for only limited use case.
     """
-    return _get_aws_resource("dynamodb").Table(TABLE_NAME)
+    return _get_aws_resource("dynamodb").Table(ADMIN_TABLE_NAME)
 
 
 def _get_table_event_client():

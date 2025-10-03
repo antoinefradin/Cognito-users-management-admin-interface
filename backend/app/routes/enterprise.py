@@ -59,6 +59,7 @@ def patch_enterprise(
     request: Request,
     enterprise_id: str,
     modify_input: EnterpriseModifyInput,
+    check_admin_permissions=Depends(check_admin),
 ):
     """Modify Enterprise info"""
     logger.info(f"PATCH /enterprise/{enterprise_id}")
@@ -142,11 +143,15 @@ def get_enterprise_by_id(
 def delete_enterprise(
     request: Request,
     enterprise_id: str,
+    check_creating_enterprise_allowed=Depends(check_creating_license_enterprise_allowed), 
+    check_admin_permissions=Depends(check_admin),
 ):
     """Delete Enterprise"""
     logger.info(f"DELETE /enterprise/{enterprise_id}")
 
-    enterprise = remove_enterprise_by_id(enterprise_id)
+    current_user: User = request.state.current_user
+
+    enterprise = remove_enterprise_by_id(current_user.id, enterprise_id)
     logger.info(f"delete_enterprise: {enterprise}")
 
 

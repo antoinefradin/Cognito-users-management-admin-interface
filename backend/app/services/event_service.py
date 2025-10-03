@@ -1,7 +1,6 @@
 import logging
 from typing import Optional
 from uuid import uuid4
-#Events
 from app.repositories.event_repository import (
     store_event,
 )
@@ -26,7 +25,7 @@ def create_new_event(
     try: 
         store_event(
             EventModel(
-                id=str(uuid4),
+                id=str(uuid4()),
                 event_date=event_date,
                 event_name=event_name,
                 event_type=event_type,

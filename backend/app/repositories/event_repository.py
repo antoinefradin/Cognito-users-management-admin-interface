@@ -11,7 +11,7 @@ from typing import Optional, Dict, Any
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
-from repositories.common import (
+from app.repositories.common import (
     RecordNotFoundError,
     _get_table_event_client,
     compose_event_id,
@@ -53,11 +53,11 @@ def store_event(custom_event: EventModel):
 
     item = {
         "PK": "EVENTS",
-        "SK": f"{custom_event.event_date}#{custom_event.entity_type}#{custom_event.id}",
+        "SK": f"{custom_event.event_date}#{custom_event.entity_type.value}#{custom_event.id}",
         "id": custom_event.id,
         "event_date": custom_event.event_date,
-        "event_name": custom_event.event_name,
-        "event_type": custom_event.event_type,
+        "event_name": custom_event.event_name.value,
+        "event_type": custom_event.event_type.value,
         "event_source": custom_event.event_source,
         "event_source_arn": custom_event.event_source_arn,
         "entity_id": custom_event.entity_id,

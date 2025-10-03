@@ -26,9 +26,9 @@ from app.repositories.common import (
 from app.utils import (
     get_current_time,
 )
-from event_service import create_new_event
+from app.services.event_service import create_new_event
 from app.repositories.models.event_model import (
-    EventModel, EventNameEnum, EventTypeEnum,EntityTypeEnum
+    EventNameEnum, EventTypeEnum,EntityTypeEnum
 )
 
 
@@ -63,7 +63,7 @@ def create_new_enterprise(user_id: str, enterprise_input: EnterpriseInput) -> En
         ),
     )
 
-    # Enterprise INSERT event
+    # Enterprise INSERT event    
     create_new_event(
         user_id=user_id,
         event_date=current_time,
@@ -96,46 +96,64 @@ def modify_enterprise(user_id: str, enterprise_id: str, modify_input: Enterprise
     """Update an existing enterprise."""
     current_time = get_current_time()
 
-    logger.info(f"update_enterprise() function")
+    logger.info("update_enterprise() function")
     logger.info(f"Updating enterprise: {enterprise_id}")
 
-    if is_enterprise_exists(enterprise_id):
-        update_enterprise(
-            enterprise_id=enterprise_id,
-            contract_start_date=modify_input.contract_start_date,
-            updated_date=current_time,
-            updated_by=user_id,
-            industry=modify_input.industry,
-            size=modify_input.size,
-            status=modify_input.status,
-            contact_email=modify_input.contact_email,
-            contact_phone=modify_input.contact_phone,
-            address=modify_input.address,
-            website=modify_input.website,
-            subscription_tier=modify_input.subscription_tier,
-            max_licenses=modify_input.max_licenses,
-            used_licenses=modify_input.used_licenses,
-            monthly_revenue=modify_input.monthly_revenue,
-            contract_end_date=modify_input.contract_end_date,
-        )
-    return EnterpriseModifyOutput(
-        id=enterprise_id,
-        name=modify_input.name,
-        industry=modify_input.industry,
-        size=modify_input.size,
-        contact_email=modify_input.contact_email,
-        contact_phone=modify_input.contact_phone,
-        address=modify_input.address,
-        website=modify_input.website,
-        status=modify_input.status,
-        subscription_tier=modify_input.subscription_tier,
-        max_licenses=modify_input.max_licenses,
-        used_licenses=modify_input.used_licenses,
-        contract_start_date=modify_input.contract_start_date,
-        contract_end_date=modify_input.contract_end_date,
-        monthly_revenue=modify_input.monthly_revenue,
-        updated_date=current_time,
-        )
+    try: 
+        if is_enterprise_exists(enterprise_id):
+            update_enterprise(
+                enterprise_id=enterprise_id,
+                contract_start_date=modify_input.contract_start_date,
+                updated_date=current_time,
+                updated_by=user_id,
+                industry=modify_input.industry,
+                size=modify_input.size,
+                status=modify_input.status,
+                contact_email=modify_input.contact_email,
+                contact_phone=modify_input.contact_phone,
+                address=modify_input.address,
+                website=modify_input.website,
+                subscription_tier=modify_input.subscription_tier,
+                max_licenses=modify_input.max_licenses,
+                used_licenses=modify_input.used_licenses,
+                monthly_revenue=modify_input.monthly_revenue,
+                contract_end_date=modify_input.contract_end_date,
+            )
+
+            # Enterprise MODIFY event    
+            create_new_event(
+                user_id=user_id,
+                event_date=current_time,
+                event_name=EventNameEnum.MODIFY,
+                event_type=EventTypeEnum.ENTERPRISE_UPDATED,
+                entity_id=enterprise_id,
+                entity_type=EntityTypeEnum.ENTERPRISE,
+            )
+
+            return EnterpriseModifyOutput(
+                id=enterprise_id,
+                name=modify_input.name,
+                industry=modify_input.industry,
+                size=modify_input.size,
+                contact_email=modify_input.contact_email,
+                contact_phone=modify_input.contact_phone,
+                address=modify_input.address,
+                website=modify_input.website,
+                status=modify_input.status,
+                subscription_tier=modify_input.subscription_tier,
+                max_licenses=modify_input.max_licenses,
+                used_licenses=modify_input.used_licenses,
+                contract_start_date=modify_input.contract_start_date,
+                contract_end_date=modify_input.contract_end_date,
+                monthly_revenue=modify_input.monthly_revenue,
+                updated_date=current_time,
+                )
+    
+    except RecordNotFoundError as e:
+        logger.error(f"Enterprise not found: {e}")
+        raise
+
+
 
 def fetch_all_enterprises(limit: int = 20) -> list[EnterpriseMeta]:
     """Find all enterprises.
@@ -165,6 +183,7 @@ def fetch_all_enterprises(limit: int = 20) -> list[EnterpriseMeta]:
     return enterprises
 
 
+
 def fetch_enterprise(enterprise_id: str) -> EnterpriseModel:
     """Fetch enterprise by id."""
     try:
@@ -175,8 +194,10 @@ def fetch_enterprise(enterprise_id: str) -> EnterpriseModel:
         )
     
 
-def remove_enterprise_by_id(enterprise_id: str) -> EnterpriseMetaOutput:
+
+def remove_enterprise_by_id(user_id: str, enterprise_id: str) -> EnterpriseMetaOutput:
     """Remove an existing enterprise."""
+    current_time = get_current_time()
 
     logger.info(f"remove_enterprise_by_id() function")
     logger.info(f"Remove enterprise: {enterprise_id}")
@@ -184,6 +205,20 @@ def remove_enterprise_by_id(enterprise_id: str) -> EnterpriseMetaOutput:
     """Remove bot by id."""
     if is_enterprise_exists(enterprise_id):
         try:
-            return delete_enterprise_by_id(enterprise_id)
-        except RecordNotFoundError:
+            response = delete_enterprise_by_id(enterprise_id)
+            
+            # Enterprise MODIFY event    
+            create_new_event(
+                user_id=user_id,
+                event_date=current_time,
+                event_name=EventNameEnum.REMOVE,
+                event_type=EventTypeEnum.ENTERPRISE_DELETED,
+                entity_id=enterprise_id,
+                entity_type=EntityTypeEnum.ENTERPRISE,
+            )
+
+            return response
+
+        except RecordNotFoundError as e:
+            logger.error(f"Enterprise deletion failed: {e}")
             pass

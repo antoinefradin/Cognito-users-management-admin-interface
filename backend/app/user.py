@@ -13,4 +13,6 @@ class User(BaseModel):
 
     def is_creating_licenses_and_enterprise_allowed(self) -> bool:
         return self.is_admin() or "LicensesEnterprisesCreationAllowed" in self.groups 
-
+    
+    def is_deleting_licenses_and_enterprise_allowed(self) -> bool:
+        return self.is_admin()
