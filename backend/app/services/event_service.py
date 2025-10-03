@@ -3,9 +3,10 @@ from typing import Optional
 from uuid import uuid4
 from app.repositories.event_repository import (
     store_event,
+    get_events_by_date,
 )
 from app.repositories.models.event_model import (
-    EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum
+    EventModel, EventNameEnum, EventTypeEnum, EntityTypeEnum, EventMeta
 )
 
 logger = logging.getLogger(__name__)
@@ -39,5 +40,26 @@ def create_new_event(
     except Exception as e:
         logger.error(f"Failed to create {event_type} event: {e}")
         return False
+    
+
+def fetch_all_events(limit: int = 5) -> list[EventMeta]:
+    """Find all events.
+    The order is descending by `event_date`.
+    """
+    if limit and (limit < 0 or limit > 100):
+        raise ValueError("Limit must be between 0 and 100")
+
+    response = get_events_by_date(limit = limit)
+
+    events = []
+    for item in response["Items"]:
+        events.append(
+            EventMeta(
+                id=item["id"],
+                event_date=item["event_date"],
+                event_type=item["event_type"]
+            )
+        )
+    return events
 
 

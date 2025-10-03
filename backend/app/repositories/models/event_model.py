@@ -20,7 +20,7 @@ class EntityTypeEnum(str, Enum):
     LICENSE = "LICENSE"
 
 class EventModel(BaseModel):
-    id: str = Field(..., description="Company id")
+    id: str = Field(..., description="Event id")
     event_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
     event_name: EventNameEnum = Field(..., description="Event name")
     event_type: EventTypeEnum = Field(..., description="Event type") 
@@ -32,17 +32,7 @@ class EventModel(BaseModel):
     details: Optional[dict] = Field(None, description="Event details")
 
 
-
-# class EventMeta(BaseModel):
-#     id: str = Field(..., description="Company id")
-#     name: str = Field(..., description="Company name")
-#     industry: Optional[IndustryEnum] = Field(None, description="Industry sector")
-    
-#     website: Optional[str] = Field(None, description="Company website")
-#     status: EnterpriseStatusEnum = Field(default=EnterpriseStatusEnum.ACTIVE, description="Enterprise status")
-#     subscription_tier: SubscriptionTierEnum = Field(default=SubscriptionTierEnum.BASIC, description="Subscription tier")
-#     max_licenses: int = Field(..., description="Maximum number of licenses allowed")
-#     used_licenses: int = Field(default=0, ge=0, description="Currently used licenses")
-
-#     contract_end_date: Optional[str] = Field(None, description="Contract end date (YYYY-MM-DD)")
-#     monthly_revenue: Optional[int] = Field(default=0, ge=0, description="Monthly revenue from this enterprise")
+class EventMeta(BaseModel):
+    id: str = Field(..., description="Event id")
+    event_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
+    event_type: EventTypeEnum = Field(..., description="Event type") 

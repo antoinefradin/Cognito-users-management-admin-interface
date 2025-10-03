@@ -24,25 +24,25 @@ from app.repositories.models.event_model import (
 logger = logging.getLogger(__name__)
 
 
-# def get_enterprises_by_contract_end_date(limit: int = 20, ascending: bool = True):
-#     table = _get_table_public_client()
-#     logger.info(f"Get enterprises sorted by contract_end_date")
 
-#     # Fetch all bots
-#     query_params = {
-#         "IndexName": "GSI1",
-#         "KeyConditionExpression": "GSI1PK = :pk_val",
-#         "ExpressionAttributeValues": {
-#             ":pk_val": "TYPE#ENTERPRISE",
-#         },
-#         "ScanIndexForward": ascending,
-#     }
-#     if limit:
-#         query_params["Limit"] = limit
+def get_events_by_date(limit: int = 5, ascending: bool = False):
+    table = _get_table_event_client()
+    logger.info(f"Get events sorted by event_date")
 
-#     response = table.query(**query_params)
-#     return response
+    # Fetch events sorted by date (SK contains timestamp)
+    # SK starts with ISO date, enabling automatic chronological sorting
+    query_params = {
+        "KeyConditionExpression": "PK = :pk_val",
+        "ExpressionAttributeValues": {
+            ":pk_val": "EVENTS",
+        },
+        "ScanIndexForward": ascending,  # False = descending (most recent first)
+    }
+    if limit:
+        query_params["Limit"] = limit
 
+    response = table.query(**query_params)
+    return response
 
 
 def store_event(custom_event: EventModel):
