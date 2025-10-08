@@ -51,13 +51,15 @@ def fetch_all_events(limit: int = 5) -> list[EventMeta]:
 
     response = get_events_by_date(limit = limit)
 
+    logger.info(response)
     events = []
     for item in response["Items"]:
         events.append(
             EventMeta(
                 id=item["id"],
                 event_date=item["event_date"],
-                event_type=item["event_type"]
+                event_type=item["event_type"],
+                user_id=item["user_id"],
             )
         )
     return events

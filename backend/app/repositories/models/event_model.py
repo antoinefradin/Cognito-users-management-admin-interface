@@ -25,4 +25,5 @@ class EventMeta(BaseModel):
     id: str = Field(..., description="Event id")
     event_date: str = Field(..., description="Creation date (YYYY-MM-DD)")
     event_type: EventTypeEnum = Field(..., description="Event type") 
+    user_id: str = Field(..., description="Cognito User id")
     details: Optional[dict] = Field(None, description="Event details")
