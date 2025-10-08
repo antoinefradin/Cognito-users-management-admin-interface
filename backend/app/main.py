@@ -10,6 +10,7 @@ from app.dependencies import get_current_user
 #     ResourceConflictError,
 # )
 from app.routes.enterprise import router as enterprise_router
+from app.routes.event import router as event_router
 # from app.routes.published_api import router as published_api_router
 from app.user import User
 # from app.utils import is_running_on_lambda
@@ -43,7 +44,7 @@ app = FastAPI(
 )
 
 app.include_router(enterprise_router)
-
+app.include_router(event_router)
 
 app.add_middleware(
     CORSMiddleware,

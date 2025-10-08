@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 
-router = APIRouter(tags=["event"])#, prefix="/enterprise")
+router = APIRouter(tags=["event"])
 
 
 @router.get("/event", response_model=list[EventMetaOutput])
@@ -29,7 +29,7 @@ def get_all_events(
     """Get all events. The order is descending by `event_date`.
     - If `limit` is specified, only the first n events will be returned.
     """
-    logger.info(" GET /event")
+    logger.info(" GET /event ###########")
 
     events = []
     events = fetch_all_events(limit=limit)

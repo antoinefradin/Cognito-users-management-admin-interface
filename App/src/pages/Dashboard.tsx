@@ -31,6 +31,9 @@ const Dashboard: React.FC = () => {
         setIsLoading(false);
       }
     }
+  else{
+    console.log("######## no eventsResponse")
+  }
     if (swrLoading !== undefined) {
       setIsLoading(swrLoading);
     }

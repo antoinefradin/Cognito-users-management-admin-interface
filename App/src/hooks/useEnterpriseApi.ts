@@ -23,75 +23,15 @@ const useEnterpriseApi = () => {
     getEnterprise: (enterpriseId: string) => {
       return http.getOnce<GetEnterpriseResponse>(`enterprise/${enterpriseId}`);
     },
-    // getEnterprise: (enterpriseId?: string) => {
-    //   return http.get<GetEnterpriseResponse>(enterpriseId ? `enterprise/${enterpriseId}` : null);
-    // },
-    // botSummary: (botId?: string) => {
-    //   return http.get<GetBotSummaryResponse>(
-    //     botId ? `bot/summary/${botId}` : null,
-    //     {
-    //       refreshInterval: (data?: GetBotSummaryResponse) => {
-    //         if (
-    //           data?.syncStatus === 'QUEUED' ||
-    //           data?.syncStatus === 'RUNNING'
-    //         ) {
-    //           return 5000;
-    //         }
-    //         return 0;
-    //       },
-    //     }
-    //   );
-    // },
     registerEnterprise: (params: RegisterEnterpriseRequest) => {
       return http.post<RegisterEnterpriseResponse>('enterprise', params);
     },
     updateEnterprise: (enterpriseId: string, params: UpdateEnterpriseRequest) => {
       return http.patch<UpdateEnterpriseResponse>(`enterprise/${enterpriseId}`, params);
     },
-    // updateBotPinned: (botId: string, params: UpdateBotPinnedRequest) => {
-    //   return http.patch<UpdateBotPinnedResponse>(`bot/${botId}/pinned`, params);
-    // },
-    // updateBotVisibility: (
-    //   botId: string,
-    //   params: UpdateBotVisibilityRequest
-    // ) => {
-    //   return http.patch<UpdateBotVisibilityResponse>(
-    //     `bot/${botId}/visibility`,
-    //     params
-    //   );
-    // },
     deleteEnterprise: (enterpriseId: string) => {
       return http.delete(`enterprise/${enterpriseId}`);
     },
-    // getPresignedUrl: (botId: string, file: File) => {
-    //   return http.getOnce<GetPresignedUrlResponse>(
-    //     `bot/${botId}/presigned-url`,
-    //     {
-    //       filename: file.name,
-    //       contentType: file.type,
-    //     }
-    //   );
-    // },
-    // uploadFile: (
-    //   presignedUrl: string,
-    //   file: File,
-    //   onProgress?: (progress: number) => void
-    // ) => {
-    //   // presignedURL contains credential.
-    //   return axios.put(presignedUrl, file, {
-    //     headers: {
-    //       'Content-Type': file.type,
-    //     },
-    //     onUploadProgress: (e) => {
-    //       onProgress ? onProgress(Math.floor((e.progress ?? 0) * 100)) : null;
-    //     },
-    //   });
-    // },
-    // deleteUploadedFile: (botId: string, filename: string) => {
-    //   return http.delete(`bot/${botId}/uploaded-file`, {
-    //     filename,
-    //   });
-    // },
   };
 };
 
