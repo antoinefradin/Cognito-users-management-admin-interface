@@ -61,7 +61,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
   };
 
   const titles_template: Record<string, string> = {
-    enterprise_added: 'New Enterprise Added',
+    enterprise_created: 'New Enterprise Added',
     enterprise_updated: 'Enterprise Updated',
     enterprise_deleted: 'Enterprise Removed',
     license_created: 'New License Assigned',
@@ -70,6 +70,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
   };
 
   const handleActivityTitle = (eventType: EventTypeEnum) => {
+    console.log(eventType)
     const template = titles_template[eventType.toLowerCase()];
     if (template) {
       return template;
@@ -78,7 +79,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
   };
 
   const description_template: Record<string, string> = {
-    enterprise_added: 'xxxx Successfully added to the platform',
+    enterprise_created: 'xxxx Successfully added to the platform',
     enterprise_updated: 'xxxx informations has been updated',
     enterprise_deleted: 'xxxx has been removed',
     license_created: 'New license assigned to xxx@xxx.com',
@@ -114,7 +115,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                 <p className="text-sm text-gray-600 mb-2">{handleActivityDescription(activity.type)}</p>
                 <div className="flex items-center gap-3">
                   <Badge variant="secondary" className={getStatusColor(activity.type)}>
-                    {activity.type.replace('_', ' ')}
+                    {activity.type.replace('_', ' ').split(' ').at(-1)?.toLowerCase()}
                   </Badge>
                   <span className="text-xs text-gray-500">
                     {format(new Date(activity.timestamp), 'MMM d, h:mm a')}
@@ -123,7 +124,8 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
               </div>
               <Avatar className="w-8 h-8">
                 <AvatarFallback className="text-xs bg-blue-100 text-blue-600">
-                  {activity.user.split(' ').map(n => n[0]).join('')}
+                  {/*activity.user.split('-').map(n => n[0]).join('')*/}
+                  {"SA"}
                 </AvatarFallback>
               </Avatar>
             </div>

@@ -36,9 +36,9 @@ def get_all_events(
 
     output = [
         EventMetaOutput(
-            id=event["id"],
-            event_date=event["event_date"],
-            event_type=event["event_type"]
+            id=event.id,
+            event_date=event.event_date,
+            event_type=event.event_type,
         )
         for event in events
     ]

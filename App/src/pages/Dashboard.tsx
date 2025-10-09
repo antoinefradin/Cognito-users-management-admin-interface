@@ -1,16 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-import { Enterprise } from "@/entities/Enterprise.ts";
-import type { EnterpriseType} from "@/entities/Enterprise.ts";
-import { License } from "@/entities/License.ts";
-import type { LicenseType} from "@/entities/License.ts";
 import { Building2, Users, KeySquare as LicenseIcon, DollarSign } from "lucide-react";
 import MetricCard from "../components/dashboard/MetricCard";
 import RecentActivity from "../components/dashboard/RecentActivity";
 import type {EventMeta} from '@/@types/event.d';
 import useEvents from "@/hooks/useEventApi";
-
-
 
 
 const Dashboard: React.FC = () => {
@@ -32,7 +26,7 @@ const Dashboard: React.FC = () => {
       }
     }
   else{
-    console.log("######## no eventsResponse")
+    console.log("######## no eventsResponse") // Wait getEvents TO DO
   }
     if (swrLoading !== undefined) {
       setIsLoading(swrLoading);
@@ -112,9 +106,9 @@ const Dashboard: React.FC = () => {
           <div className="lg:col-span-2">
             <RecentActivity 
               activities={events.map((event) => ({
-                type: event.event_type,
-                timestamp: event.event_date,
-                user: event.user_id,
+                type: event['eventType'],
+                timestamp: event['eventDate'],
+                user: event['userId'],
               }))} 
             />
           </div>

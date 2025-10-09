@@ -62,6 +62,8 @@ def fetch_all_events(limit: int = 5) -> list[EventMeta]:
                 user_id=item["user_id"],
             )
         )
+    logger.info(events)
+
     return events
 
 

@@ -23,9 +23,9 @@ export enum EntityTypeEnum {
 
 export type EventMeta = {
   id: string;
-  event_date: str;
-  event_type: EventTypeEnum;
-  user_id: str;
+  eventDate: str;
+  eventType: EventTypeEnum;
+  userId: str;
   details?: dict;
 };
 
